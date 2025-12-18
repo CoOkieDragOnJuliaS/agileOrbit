@@ -27,23 +27,27 @@ In root folder:
 2. Create a `.env` file in the root directory with:
    ```env
    PORT=5000
-    HOST=localhost
-    HOST_URL=http://localhost:5000
-   FIREBASE_API_KEY=your-api-key
-   FIREBASE_AUTH_DOMAIN=your-auth-domain
-   FIREBASE_PROJECT_ID=project-id
-   FIREBASE_CLIENT_EMAIL=your-service-account-email@project.iam.gserviceaccount.com
-   FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n"
-   FIREBASE_DATABASE_URL=project-url
-   FIREBASE_STORAGE_BUCKET=your-storage-bucket
-   FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
-   FIREBASE_APP_ID=your-app-id
-   FIREBASE_MEASUREMENT_ID=your-measurement-id
+   HOST=localhost
+   HOST_URL=http://localhost:5000
+   API_KEY=your-api-key
+   AUTH_DOMAIN=your-auth-domain
+   PROJECT_ID=project-id
+   ADMIN_EMAIL=your-service-account-email@project.iam.gserviceaccount.com
+   DATABASE_URL=project-url
+   STORAGE_BUCKET=your-storage-bucket
+   MESSAGING_SENDER_ID=your-messaging-sender-id
+   APP_ID=your-app-id
+   MEASUREMENT_ID=your-measurement-id
    ```
+The data is located here (in the settings menu of the firebase project overview):
+- ![Settings of the WebApp from Firebase, information about the environment variables are located there.](image.png)
+
+- The ADMIN-email is located in the Admin Settings --> see Firebase Admin SDK Setup below
+
 
 4. Start the backend server:
    ```bash
-   npm start dev
+   npm run dev
    ```
 
 ## 💻 Frontend Setup
@@ -70,9 +74,9 @@ In root folder:
    REACT_APP_API_URL=http://localhost:3001
    ```
 
-4. Start the development server:
+4. Start the development server (inside the root directory):
    ```bash
-   npm start client
+   npm run client
    ```
 
 ## 🔑 Firebase Admin SDK Setup (One-time)
@@ -82,8 +86,12 @@ In root folder:
 3. Click the gear icon ⚙️ > Project settings
 4. Go to "Service accounts" tab
 5. Click "Generate new private key"
-6. Save the JSON file securely
+6. Save the JSON file securely with the new name: serviceAccountKey.json
 7. Copy the private key and client email to your local root's `.env` file
+
+- Information about the "Dienstkonto", the admin:
+- ![Setting of the WebApp from Firebase and then serviceaccount / Dienstkonto](image-1.png)
+- ![generating a new private key](image-2.png) (Generate a new key, save it and copy it into the root folder of your local project - with the name: )
 
 ## 🛠 Available Scripts
 
