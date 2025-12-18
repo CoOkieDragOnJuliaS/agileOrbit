@@ -104,6 +104,7 @@ In root folder:
 - **CORS Issues**: Ensure backend CORS is properly configured
 - **Environment Variables Not Loading**: Restart your development server after changing `.env` files
 - **Network Request Failed**: Check for typos in Firebase config and ensure all services are enabled
+- **Unversioning a file you don't want to commit**: git rm --cached <filename>
 
 ## 📝 Notes
 - Never commit `.env` files to version control
