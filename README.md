@@ -1,2 +1,112 @@
-# agileOrbit
+# AgileOrbit
+
 FH Project for SoftwareEngineering - AgileOrbit is a tool to help developers keep track of tasks and documents. It can evolve in the future to hold more responsibilities and features to help coordinate and cooperate with the team itself.
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v16 or later)
+- npm (v8 or later)
+- Git
+
+## 📦 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/agileorbit.git
+   cd agileorbit
+   ```
+
+## 🔧 Backend Setup
+In root folder:
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Create a `.env` file in the root directory with:
+   ```env
+   PORT=5000
+    HOST=localhost
+    HOST_URL=http://localhost:5000
+   FIREBASE_API_KEY=your-api-key
+   FIREBASE_AUTH_DOMAIN=your-auth-domain
+   FIREBASE_PROJECT_ID=project-id
+   FIREBASE_CLIENT_EMAIL=your-service-account-email@project.iam.gserviceaccount.com
+   FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n"
+   FIREBASE_DATABASE_URL=project-url
+   FIREBASE_STORAGE_BUCKET=your-storage-bucket
+   FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+   FIREBASE_APP_ID=your-app-id
+   FIREBASE_MEASUREMENT_ID=your-measurement-id
+   ```
+
+4. Start the backend server:
+   ```bash
+   npm start dev
+   ```
+
+## 💻 Frontend Setup
+
+1. In a new terminal, navigate to the client directory:
+   ```bash
+   cd client
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file in the client directory:
+   ```env
+   REACT_APP_FIREBASE_API_KEY=your-api-key
+   REACT_APP_FIREBASE_AUTH_DOMAIN=agile-orbit-d6365.firebaseapp.com
+   REACT_APP_FIREBASE_PROJECT_ID=agile-orbit-d6365
+   REACT_APP_FIREBASE_STORAGE_BUCKET=agile-orbit-d6365.appspot.com
+   REACT_APP_FIREBASE_MESSAGING_SENDER_ID=539662100374
+   REACT_APP_FIREBASE_APP_ID=1:539662100374:web:e685e1504f103a824c5fb7
+   REACT_APP_FIREBASE_MEASUREMENT_ID=G-XYB10Z21VS
+   REACT_APP_API_URL=http://localhost:3001
+   ```
+
+4. Start the development server:
+   ```bash
+   npm start client
+   ```
+
+## 🔑 Firebase Admin SDK Setup (One-time)
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select your project
+3. Click the gear icon ⚙️ > Project settings
+4. Go to "Service accounts" tab
+5. Click "Generate new private key"
+6. Save the JSON file securely
+7. Copy the private key and client email to your local root's `.env` file
+
+## 🛠 Available Scripts
+
+### Frontend (from /client)
+- `npm start` - Start development server
+- `npm test` - Run tests
+- `npm run build` - Create production build
+
+### Backend (from /server)
+- `npm start` - Start server in production mode
+- `npm run dev` - Start server in development mode with nodemon
+
+
+## 🔍 Troubleshooting
+
+### Common Issues
+- **Firebase Authentication Errors**: Verify your Firebase configuration values
+- **CORS Issues**: Ensure backend CORS is properly configured
+- **Environment Variables Not Loading**: Restart your development server after changing `.env` files
+- **Network Request Failed**: Check for typos in Firebase config and ensure all services are enabled
+
+## 📝 Notes
+- Never commit `.env` files to version control
+- Never commit serviceAccountKey.json to version control
+- Keep your Firebase Admin credentials secure
+- The project uses a monorepo structure with separate client and server directories
