@@ -40,7 +40,7 @@ In root folder:
    MEASUREMENT_ID=your-measurement-id
    ```
 The data is located here (in the settings menu of the firebase project overview):
-- ![Settings of the WebApp from Firebase, information about the environment variables are located there.](image.png)
+- ![Settings of the WebApp from Firebase, information about the environment variables are located there.](assets/image.png)
 
 - The ADMIN-email is located in the Admin Settings --> see Firebase Admin SDK Setup below
 
@@ -90,8 +90,8 @@ The data is located here (in the settings menu of the firebase project overview)
 7. Copy the private key and client email to your local root's `.env` file
 
 - Information about the "Dienstkonto", the admin:
-- ![Setting of the WebApp from Firebase and then serviceaccount / Dienstkonto](image-1.png)
-- ![generating a new private key](image-2.png) (Generate a new key, save it and copy it into the root folder of your local project - with the name: )
+- ![Setting of the WebApp from Firebase and then serviceaccount / Dienstkonto](assets/image-1.png)
+- ![generating a new private key](assets/image-2.png) (Generate a new key, save it and copy it into the root folder of your local project - with the name: )
 
 ## 🛠 Available Scripts
 
