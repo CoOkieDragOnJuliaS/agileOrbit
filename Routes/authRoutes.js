@@ -100,7 +100,7 @@ router.post('/create-user', verifyAdmin, async (req, res) => {
             disabled: false
         });
 
-        // You can add custom claims here if needed
+        // custom claims
         // await admin.auth().setCustomUserClaims(userRecord.uid, { role: 'user' });
 
         res.status(201).json({ 
@@ -150,52 +150,6 @@ router.get('/me', async (req, res) => {
     }
 });
 
-
-// Admin sign-in endpoint
-router.post('/admin/signin', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
-        }
-        
-        try {
-            // Get user by email using Admin SDK
-            const userRecord = await admin.auth().getUserByEmail(email);
-            
-            // Check if the user is an admin
-            if (!userRecord.customClaims?.admin) {
-                return res.status(403).json({ error: 'Admin privileges required' });
-            }
-            
-            // Create a custom token for the admin user
-            const customToken = await admin.auth().createCustomToken(userRecord.uid);
-            
-            // Verify the password by attempting to sign in with email/password
-            // This will throw if credentials are invalid
-            await signInWithEmailAndPassword(auth, email, password);
-            
-            res.json({ 
-                token: customToken,
-                uid: userRecord.uid,
-                email: userRecord.email
-            });
-            
-        } catch (error) {
-            console.error('Admin auth error:', error);
-            // Don't reveal too much information about why the login failed
-            res.status(401).json({ 
-                error: 'Authentication failed. Please check your credentials.'
-            });
-        }
-    } catch (error) {
-        console.error('Server error during admin sign in:', error);
-        res.status(500).json({ 
-            error: 'An error occurred during authentication' 
-        });
-    }
-});
 
 /**
  * @route POST /auth/admin/signin
