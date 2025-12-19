@@ -1,29 +1,31 @@
 /**
- * @file SignIn Component
- * @module SignIn
- * @description Authentication component for regular user sign-in.
- * Handles user authentication and redirects to the appropriate dashboard.
+ * @file AdminSignIn Component
+ * @module AdminSignIn
+ * @description Authentication component for admin users.
+ * Handles admin authentication with custom token flow and redirects to admin dashboard.
  * @requires react
  * @requires react-router-dom
- * @requires ../../contexts/AuthContext
+ * @requires ../../config/firebase
+ * @requires firebase/auth
  */
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { auth } from '../../config/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 /**
- * SignIn component for user authentication.
- * Handles form submission, validation, and authentication state.
+ * AdminSignIn component for admin authentication.
+ * Implements a custom token-based authentication flow for admin users.
  * 
  * @component
- * @returns {JSX.Element} Rendered sign-in form
+ * @returns {JSX.Element} Rendered admin sign-in form
  * 
  * @example
  * // Usage in a route
- * <Route path="/login" element={<SignIn />} />
+ * <Route path="/admin/login" element={<AdminSignIn />} />
  */
-function SignIn() {
+export default function AdminSignIn() {
   // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,20 +34,20 @@ function SignIn() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // Authentication context
-  const { signIn } = useAuth();
+  // Navigation hook
   const navigate = useNavigate();
 
   /**
-   * Handles form submission for user sign-in.
+   * Handles form submission for admin authentication.
+   * Makes an API call to get a custom token and signs in with it.
    * 
    * @async
    * @function handleSubmit
    * @param {Event} e - Form submit event
-   * @param {boolean} [isAdmin=false] - Whether this is an admin sign-in attempt
    * @returns {Promise<void>}
+   * @throws {Error} If authentication fails
    */
-  async function handleSubmit(e, isAdmin = false) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     try {
@@ -53,38 +55,53 @@ function SignIn() {
       setError('');
       setLoading(true);
       
-      // Attempt to sign in using AuthContext
-      await signIn(email, password, isAdmin);
+      // Call the admin sign-in endpoint to get a custom token
+      const response = await fetch('/api/auth/admin/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      // Handle non-OK responses
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Admin authentication failed');
+      }
+
+      // Parse the response data
+      const data = await response.json();
       
-      // Redirect based on user type
-      navigate(isAdmin ? '/admin/dashboard' : '/dashboard');
+      // Sign in with the custom token from the server
+      await signInWithCustomToken(auth, data.token);
+      
+      // Redirect to admin dashboard on success
+      navigate('/admin/dashboard');
     } catch (err) {
-      // Handle authentication errors
-      setError(`Failed to sign in: ${isAdmin ? 'Admin ' : ''}${err.message}`);
-    } finally {
-      // Reset loading state
+      // Handle and display authentication errors
+      console.error('Admin sign in error:', err);
+      setError(err.message || 'Failed to sign in. Please check your credentials.');
       setLoading(false);
     }
   }
 
-  // Render the sign-in form
+  // Render the admin sign-in form
   return (
     // Main container with responsive padding and centering
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Welcome Back
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Admin Sign In
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your account
-          </p>
           <p className="mt-2 text-center text-sm text-gray-600">
+            Or{' '}
             <Link 
-              to="/admin/login" 
+              to="/login" 
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
-              Sign in as admin
+              sign in as a regular user
             </Link>
           </p>
         </div>
@@ -93,13 +110,13 @@ function SignIn() {
             <span className="block sm:inline">{error}</span>
           </div>
         )}
-        <div className="mt-8 space-y-6">
-          {/* Client sign-in form */}
-          <form 
-            onSubmit={(e) => handleSubmit(e, false)} 
-            className="space-y-6"
-            aria-label="Client sign-in form"
-          >
+        {/* Admin sign-in form */}
+        <form 
+          className="mt-8 space-y-6" 
+          onSubmit={handleSubmit}
+          aria-label="Admin sign-in form"
+        >
+          <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email-address" className="sr-only">
@@ -136,21 +153,16 @@ function SignIn() {
           </div>
 
           <div>
-              <div className="space-y-4">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  {loading ? 'Signing in...' : 'Sign in as Client'}
-                </button>
-              </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Sign in as Admin
+            </button>
           </div>
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   );
 }
-
-export default SignIn;

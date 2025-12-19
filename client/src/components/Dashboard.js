@@ -2,6 +2,12 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * This is a deprecated version of the dashboard - like a 1.0 version for a general view.
+ * It was later changed to a Dashboard version for Admins and a Dashboard version for clients
+ * @returns {Element}
+ * @constructor
+ */
 function Dashboard() {
   const { currentUser, signOut } = useAuth();
   const navigate = useNavigate();
@@ -9,7 +15,7 @@ function Dashboard() {
   async function handleSignOut() {
     try {
       await signOut();
-      navigate('/signin');
+      navigate('/');
     } catch (error) {
       console.error('Failed to sign out', error);
     }
