@@ -8,6 +8,7 @@ import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import DocumentEditor from './DocumentEditor';
+import DocumentTree from './DocumentTree';
 
 
 /**
@@ -50,6 +51,8 @@ export default function DocumentArea() {
     }
   };
 
+  
+
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
@@ -62,7 +65,7 @@ export default function DocumentArea() {
             </div>
             <div className="flex items-center">
               <span className="text-sm text-gray-700 mr-4">
-                {currentUser?.email}
+              <DocumentTree />
               </span>
               <button
                 onClick={handleSignOut}

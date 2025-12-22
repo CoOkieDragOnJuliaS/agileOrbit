@@ -36,4 +36,26 @@ router.post("/saveDocument", async (req, res) => {
   }
 });
 
+router.get("/fileTree", async (req, res) => {
+    try {
+      const snapshot = await admin
+        .firestore()
+        .collection("documents")
+        //.where("ownerId", "==", req.user.uid)
+        .orderBy("updatedAt", "desc")
+        .get();
+  
+      const documents = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+  
+      res.json(documents);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to fetch documents" });
+    }
+  });
+  
+
 export default router;
