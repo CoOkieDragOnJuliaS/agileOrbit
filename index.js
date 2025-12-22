@@ -9,6 +9,7 @@
  * @requires ./config
  * @requires fs/promises
  * @requires ./Routes/authRoutes
+ * @requires ./Routes/documnentRoutes
  * @requires ./middleware/auth
  */
 
@@ -23,6 +24,7 @@ const serviceAccount = JSON.parse(await readFile(new URL('./serviceAccountKey.js
 
 // Import route handlers
 import authRoutes from './Routes/authRoutes.js';
+import documentRoutes from './Routes/documentRoutes.js'
 
 /**
  * Firebase Admin SDK initialization
@@ -73,6 +75,7 @@ app.get('/', (req, res) => {
 
 // Mount API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/documents', documentRoutes);
 
 // Import auth middleware after routes to avoid circular dependencies
 
