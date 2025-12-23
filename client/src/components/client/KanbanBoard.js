@@ -7,93 +7,66 @@ function KanbanBoard() {
         done: []
     });
 
-    
+    const renderEmptyState = () => (
+        <div className="empty-state">
+            <p>No tasks yet. Click + to add a new task.</p>
+        </div>
+    );
 
-    // Add task handlers, drag-and-drop logic, etc.
+    const renderKanbanColumn = (column, title) => (
+        <div
+            className="kanban-column"
+            key={column}>
+            <div className="kanban-column-header">
+                <div className="column-title">
+                    <h3>{title}</h3>
+                    <span className="task-count">({tasks[column]?.length || 0})</span>
+                </div>
+                <button 
+                    className="add-card-btn" 
+                    onClick={() => {
+                        const newTask = {
+                            id: Date.now(),
+                            title: 'New Task',
+                            description: 'Click to edit',
+                            date: new Date().toLocaleDateString()
+                        };
+                        setTasks(prev => ({
+                            ...prev,
+                            [column]: [...prev[column], newTask]
+                        }));
+                    }}>
+                    +
+                </button>
+            </div>
 
-    return (
-        <div className="kanban-board">
-            <div class="kanban-board">
-                <div id="kanban_column_toDo" class="kanban-column">
-                    <div class="kanban-column-header">
-                        <h3>To do</h3><button class="addingCard">+</button>
-                    </div>
 
-                    <div class="kanban-card" draggable="true">
-                        image.jpg
-                        <h4>Update Website Homepage</h4>
-                        <p>Revise the content and layout...</p>
-                        <div class="card-footer">
-                            <span class="date">2/15/24</span>
-                            <div class="avatars">
-                                avatar1.jpg
-                                <img src="avatar2.jpg" alt=""/>
+            <div className="kanban-cards">
+                {tasks[column] && tasks[column].length > 0 ? (
+                    tasks[column].map(task => (
+                        <div key={task.id} className="kanban-card">
+                            <h4>{task.title}</h4>
+                            <p>{task.description}</p>
+                            <div className="card-footer">
+                                <span className="date">{task.date}</span>
                             </div>
                         </div>
-                    </div>
-                    <!-- More cards -->
-                </div>
-
-                <div id="kanban_column_inProgress" class="kanban-column">
-                    <div class="kanban-column-header">
-                        <h3>In Progress</h3><button class="addingCard">+</button>
-                    </div>
-                    <div class="kanban-card" draggable="true">
-                        image.jpg
-                        <h4>Update Website Homepage</h4>
-                        <p>Revise the content and layout...</p>
-                        <div class="card-footer">
-                            <span class="date">2/15/24</span>
-                            <div class="avatars">
-                                avatar1.jpg
-                                <img src="avatar2.jpg" alt=""/>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- More cards -->
-                </div>
-
-                <div id="kanban_column_test" class="kanban-column">
-                    <div class="kanban-column-header">
-                        <h3>Test</h3><button class="addingCard">+</button>
-                    </div>
-                    <div class="kanban-card" draggable="true">
-                        image.jpg
-                        <h4>Update Website Homepage</h4>
-                        <p>Revise the content and layout...</p>
-                        <div class="card-footer">
-                            <span class="date">2/15/24</span>
-                            <div class="avatars">
-                                avatar1.jpg
-                                <img src="avatar2.jpg" alt=""/>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- More cards -->
-                </div>
-
-                <div id="kanban_column_done" class="kanban-column">
-                    <div class="kanban-column-header">
-                        <h3>Done</h3><button class="addingCard">+</button>
-                    </div>
-                    <div class="kanban-card" draggable="true">
-                        image.jpg
-                        <h4>Update Website Homepage</h4>
-                        <p>Revise the content and layout...</p>
-                        <div class="card-footer">
-                            <span class="date">2/15/24</span>
-                            <div class="avatars">
-                                avatar1.jpg
-                                <img src="avatar2.jpg" alt=""/>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- More cards -->
-                </div>
+                    ))
+                ) : (
+                    renderEmptyState()
+                )}
             </div>
         </div>
     );
-}
 
+    return (
+        <div className="kanban-board">
+            {renderKanbanColumn('todo', 'To Do')}
+            {renderKanbanColumn('inProgress', 'In Progress')}
+            {renderKanbanColumn('test', 'In Test')}
+            {renderKanbanColumn('done', 'Done')}
+    </div>
+);
+}
 
 export default KanbanBoard;
