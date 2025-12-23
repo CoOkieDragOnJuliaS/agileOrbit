@@ -4,7 +4,7 @@
  * @description Main DocumentArea component for regular users, providing access to the Documentview.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import DocumentEditor from './DocumentEditor';
@@ -51,6 +51,7 @@ export default function DocumentArea() {
     }
   };
 
+  const [showEditor, setShowEditor] = useState(false);
   
 
   return (
@@ -82,12 +83,22 @@ export default function DocumentArea() {
         <main>
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div className="px-4 py-8 sm:px-0">
-              <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 p-4">
+              <div id ="main" className="border-4 border-dashed border-gray-200 rounded-lg h-96 p-4">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Your Kanban Board!</h2>
                 <p className="text-gray-600">
                   This is your personal workspace. Start organizing your tasks here.
                 </p>
-                <DocumentEditor />
+                <div id="main" className="p-4">
+                  <button
+                    onClick={() => setShowEditor(prev => !prev)}
+                    className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded"
+                  >
+                    {showEditor ? "Editor schließen" : "Neues Dokument"}
+                  </button>
+
+      {showEditor && <DocumentEditor />}
+    </div>
+                
 
                 {/* Add your Kanban board components here */}
               </div>
