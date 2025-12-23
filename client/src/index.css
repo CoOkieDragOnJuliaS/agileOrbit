@@ -11,3 +11,146 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Dashboard-Styles */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  grid-template-rows: 60px 1fr 40px;
+  height: 100vh;
+  gap: 0;
+}
+
+.sidebarLeft {
+  grid-column: 1;
+  background-color: #f5f5f5;
+  grid-row: auto;
+  height: auto;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 0.5rem;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.footer {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  border-top: 1px solid #eee;
+}
+
+/* Kanban Board Styles */
+.kanban-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  min-height: 500px;
+  margin: 20px;
+}
+
+.user-profile {
+  margin-top: auto;
+  padding: 1rem 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  display: block;
+  font-weight: bold;
+  color: #333;
+}
+
+.sign-out {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sign-out:hover {
+  background-color: #c82333;
+}
+
+/* Responsive Design Dashboard */
+@media (max-width: 768px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    grid-row: auto;
+    height: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0.5rem;
+  }
+  
+  .text {
+    font-size: 0.7rem;
+  }
+  
+  .user-profile {
+    display: none;
+  }
+  
+  .main-content {
+    margin-bottom: 70px; /* Make space for the bottom nav */
+  }
+  
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+  
+  .search-bar {
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .search-bar input {
+    width: 100%;
+  }
+}
+
