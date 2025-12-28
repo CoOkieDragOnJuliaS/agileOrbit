@@ -1,8 +1,4 @@
-/* ===================================================
-   SIGNIN STYLES (Mapping Tailwind classes to CSS)
-   =================================================== */
 
-/* --- Layout & Zentrierung --- */
 .min-h-screen {
   min-height: 100vh;
   display: flex;

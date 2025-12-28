@@ -2,10 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './Sidebar.css';
 
-/**
- * AgileOrbitSidebar Component
- * Separate component to avoid merge conflicts in Dashboard.js
- */
+
 const AgileOrbitSidebar = () => {
   return (
     <aside className="sidebar-container">
