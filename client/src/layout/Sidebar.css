@@ -1,0 +1,81 @@
+/* Sidebar Container */
+.sidebar-container {
+  width: 250px;
+  height: 100vh;
+  background-color: var(--bg-white);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  position: sticky;
+  top: 0;
+}
+
+/* Branding Bereich */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  margin-bottom: 40px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background-color: var(--primary-purple);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+}
+
+.brand-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* Navigations-Links */
+.sidebar-nav {
+  flex: 1; /* Nimmt den verfügbaren Platz ein */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background-color: var(--bg-app);
+  color: var(--text-dark);
+}
+
+/* Aktiver Link (Lila Highlight) */
+.sidebar-link.active {
+  background-color: var(--primary-light);
+  color: var(--primary-purple);
+}
+
+/* Footer Bereich (Settings) */
+.sidebar-footer {
+  border-top: 1px solid var(--border-light);
+  padding-top: 16px;
+}
+
+.settings-link {
+  color: var(--text-muted);
+}
