@@ -1,13 +1,96 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ===================================================
+   AGILEORBIT BASE CSS - ProjectFlow Style
+   =================================================== */
+
+/* --- 1. ZENTRALE VARIABLEN (FARBEN & SCHRIFT) --- */
+:root {
+  /* Highlight & Branding */
+  --primary-purple: #6c5ce7;    /* Deine zentrale Highlight-Farbe */
+  --primary-light: #efeeff;     /* Sanfter Hintergrund für aktive Elemente */
+  
+  /* Backgrounds */
+  --bg-app: #f4f7fa;            /* Hintergrund für die gesamte App */
+  --bg-white: #ffffff;          /* Hintergrund für Karten & Sidebar */
+  
+  /* Text */
+  --text-main: #2d3436;         /* Haupttextfarbe */
+  --text-muted: #636e72;        /* Nebentext (IDs, Beschreibungen) */
+  
+  /* Borders & Shadows */
+  --border-light: #dfe6e9;      /* Dezente Ränder */
+  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.05);
+  
+  /* Akzent aus dem Screenshot */
+  --accent-orange: #fdcb6e; 
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* --- 2. GLOBAL RESET & FONT --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* Einzige Schriftart für die gesamte App */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.6;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- 3. BASIS ELEMENTE (HIGHLIGHTS) --- */
+h1, h2, h3, h4 {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+a {
+  color: var(--primary-purple);
+  text-decoration: none;
+}
+
+/* Buttons & Inputs global angleichen */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+/* --- 4. LAYOUT GRUNDLAGE --- */
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Sidebar Basis */
+.sidebar {
+  width: 260px;
+  background-color: var(--bg-white);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Aktiver Menüpunkt nutzt Highlight-Farbe */
+.menu-item.active {
+  background-color: var(--primary-light);
+  color: var(--primary-purple);
+  font-weight: 600;
+}
+
+/* Main Bereich */
+.main-content {
+  flex: 1;
+  background-color: var(--bg-app);
+  overflow-y: auto;
 }

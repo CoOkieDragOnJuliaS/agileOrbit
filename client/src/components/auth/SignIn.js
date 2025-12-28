@@ -11,7 +11,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-
+import './SignIn.css';
 /**
  * SignIn component for user authentication.
  * Handles form submission, validation, and authentication state.
