@@ -7,6 +7,7 @@ import AdminDashboard from './components/admin/Dashboard';
 import ClientDashboard from './components/client/Dashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import DocumentArea from './components/DocumentArea/DocumentArea';
+import EpicArea from './components/Epics/EpicArea';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<ClientDashboard />} />
               <Route path="/documentArea" element={<DocumentArea />} />
+              <Route path="/epicArea" element={<EpicArea />} />
             </Route>
             
             {/* Admin Routes */}

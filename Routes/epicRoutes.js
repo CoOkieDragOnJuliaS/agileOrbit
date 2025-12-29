@@ -12,10 +12,11 @@ const router = express.Router();
 
 
 /**
- * POST /documents
- * Save document
+ * POST /epics
+ * Save epic
  */
-router.post("/saveDocument", async (req, res) => {
+
+router.post("/saveEpic", async (req, res) => {
   try {
     const { id, content } = req.body;
 
@@ -23,18 +24,18 @@ router.post("/saveDocument", async (req, res) => {
       return res.status(400).json({ error: "Content required" });
     }
 
-    const collection = admin.firestore().collection("documents");
+    const collection = admin.firestore().collection("epics");
 
     // UPDATE
     if (id) {
-      const docRef = collection.doc(id);
-      const docSnap = await docRef.get();
+      const epicRef = collection.doc(id);
+      const epicSnap = await epicRef.get();
 
-      if (!docSnap.exists) {
-        return res.status(404).json({ error: "Document not found" });
+      if (!epicSnap.exists) {
+        return res.status(404).json({ error: "Epic not found" });
       }
 
-      await docRef.update({
+      await epicRef.update({
         content,
         projectId: "1",
         ownerId: "test",
@@ -45,7 +46,7 @@ router.post("/saveDocument", async (req, res) => {
     }
 
     // CREATE
-    const docRef = await collection.add({
+    const epicRef = await collection.add({
       content,
       projectId: "1",
       ownerId: "test",
@@ -53,23 +54,21 @@ router.post("/saveDocument", async (req, res) => {
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    res.status(201).json({ id: docRef.id });
+    res.status(201).json({ id: epicRef.id });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to save document" });
+    res.status(500).json({ error: "Failed to save epic" });
   }
 });
 
 
-
-
-router.delete("/deleteDocument", async (req, res) =>{
-  const collection = admin.firestore().collection("documents");
+router.delete("/deleteEpic", async (req, res) =>{
+  const collection = admin.firestore().collection("epics");
   const id = req.body.id;
   try {await collection.doc(id).delete();}
   catch(err)
-  {res.status(500).json({error: "Failed to delete document"})}
+  {res.status(500).json({error: "Failed to delete epic"})}
   
 });
 
@@ -77,20 +76,20 @@ router.get("/fileTree", async (req, res) => {
     try {
       const snapshot = await admin
         .firestore()
-        .collection("documents")
+        .collection("epics")
         //.where("ownerId", "==", req.user.uid)
         .orderBy("updatedAt", "desc")
         .get();
   
-      const documents = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const epics = snapshot.docs.map(epic => ({
+        id: epic.id,
+        ...epic.data()
       }));
   
-      res.json(documents);
+      res.json(epics);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Failed to fetch documents" });
+      res.status(500).json({ error: "Failed to fetch epics" });
     }
   });
   
@@ -98,12 +97,12 @@ router.get("/fileTree", async (req, res) => {
   try {
     const doc = await admin
       .firestore()
-      .collection("documents")
+      .collection("epics")
       .doc(req.params.id)
       .get();
 
     if (!doc.exists) {
-      return res.status(404).json({ error: "Document not found" });
+      return res.status(404).json({ error: "epic not found" });
     }
 
     res.json({
@@ -112,7 +111,7 @@ router.get("/fileTree", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to load document" });
+    res.status(500).json({ error: "Failed to load epic" });
   }
 });
 
