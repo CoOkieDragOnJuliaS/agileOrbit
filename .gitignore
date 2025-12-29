@@ -140,3 +140,5 @@ vite.config.ts.timestamp-*
 
 #ServiceAccount files
 serviceAccountKey.json
+
+.DS_Store
