@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './KanbanBoard.css';
 function KanbanBoard() {
     const [tasks, setTasks] = useState({
         todo: [],
@@ -65,8 +66,8 @@ function KanbanBoard() {
             {renderKanbanColumn('inProgress', 'In Progress')}
             {renderKanbanColumn('test', 'In Test')}
             {renderKanbanColumn('done', 'Done')}
-    </div>
-);
+        </div>
+    );
 }
 
 export default KanbanBoard;

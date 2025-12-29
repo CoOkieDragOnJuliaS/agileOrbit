@@ -77,7 +77,7 @@ export default function ClientDashboard() {
                 </aside>
                 <main className="main-content">
                     <div className="content-header">
-                        <h2>Welcome back, {currentUser?.email?.split('@')[0] || 'User'}!</h2>
+                        <h2>Welcome back</h2>
                     </div>
                     <div className="kanban-container">
                         <KanbanBoard />
