@@ -18,7 +18,7 @@ const router = express.Router();
 
 router.post("/saveEpic", async (req, res) => {
   try {
-    const { id, content } = req.body;
+    const { id, content, title } = req.body;
 
     if (!content) {
       return res.status(400).json({ error: "Content required" });
@@ -37,6 +37,7 @@ router.post("/saveEpic", async (req, res) => {
 
       await epicRef.update({
         content,
+        title,
         projectId: "1",
         ownerId: "test",
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
@@ -48,6 +49,7 @@ router.post("/saveEpic", async (req, res) => {
     // CREATE
     const epicRef = await collection.add({
       content,
+      title,
       projectId: "1",
       ownerId: "test",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -83,6 +85,7 @@ router.get("/fileTree", async (req, res) => {
   
       const epics = snapshot.docs.map(epic => ({
         id: epic.id,
+        title: epic.title,
         ...epic.data()
       }));
   

@@ -5,7 +5,7 @@ import 'react-quill/dist/quill.snow.css';
 //import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 //import { db } from '../../firebase';
 
-const saveEpic = async (content,epicId) => {
+const saveEpic = async (content,epicId, title) => {
     //console.log("content:", content);
     await fetch("/api/epics/saveEpic", {
         method: "POST",
@@ -14,7 +14,8 @@ const saveEpic = async (content,epicId) => {
         },
         body: JSON.stringify({
           id: epicId,
-          content
+          content,
+          title: title
         }),
         
       });
@@ -32,6 +33,7 @@ const loadEpic = async (epicId) => {
 export default function EpicEditor({ epicId }) {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState('');
+  const [title, setTitle] = useState('');
 
   console.log(epicId);
 
@@ -43,6 +45,7 @@ export default function EpicEditor({ epicId }) {
         setLoading(true);
         const data = await loadEpic(epicId);
         setContent(data.content || "");
+        setTitle(data.title || "");
       } catch (err) {
         console.error(err);
       } finally {
@@ -72,14 +75,22 @@ export default function EpicEditor({ epicId }) {
 
   return (
     <div className="bg-white rounded-md shadow p-4">
-      
+      <div className="mb-3">
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Document title"
+          className="w-full border px-2 py-1 rounded"
+        />
+      </div>
       <ReactQuill
         theme="snow"
         value={content}
         onChange={setContent}
         placeholder="Start writing your epic..."
       />
-      <button onClick={() => saveEpic(content,epicId)} type="button">Save</button>
+      <button onClick={() => saveEpic(content,epicId, title)} type="button">Save</button>
       <button onClick={() => deleteEpic(epicId)} type="button">Delete</button>
     </div>
     

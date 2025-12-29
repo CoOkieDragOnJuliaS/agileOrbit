@@ -5,7 +5,7 @@ import 'react-quill/dist/quill.snow.css';
 //import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 //import { db } from '../../firebase';
 
-const saveDocument = async (content,docId) => {
+const saveDocument = async (content,docId, title) => {
     //console.log("content:", content);
     await fetch("/api/documents/saveDocument", {
         method: "POST",
@@ -14,7 +14,8 @@ const saveDocument = async (content,docId) => {
         },
         body: JSON.stringify({
           id: docId,
-          content
+          content,
+          title: title
         }),
         
       });
@@ -32,6 +33,7 @@ const loadDocument = async (docId) => {
 export default function DocumentEditor({ documentId }) {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState('');
+  const [title, setTitle] = useState('');
 
   console.log(documentId);
 
@@ -42,6 +44,7 @@ export default function DocumentEditor({ documentId }) {
       try {
         setLoading(true);
         const data = await loadDocument(documentId);
+        setTitle(data.title || "");
         setContent(data.content || "");
       } catch (err) {
         console.error(err);
@@ -68,18 +71,31 @@ export default function DocumentEditor({ documentId }) {
       });
 };
 
+
+
   if (loading) return <div>Lade Dokument…</div>;
 
   return (
+    
     <div className="bg-white rounded-md shadow p-4">
-      
+
+      <div className="mb-3">
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Document title"
+          className="w-full border px-2 py-1 rounded"
+        />
+      </div>
+
       <ReactQuill
         theme="snow"
         value={content}
         onChange={setContent}
         placeholder="Start writing your document..."
       />
-      <button onClick={() => saveDocument(content,documentId)} type="button">Save</button>
+      <button onClick={() => saveDocument(content,documentId, title)} type="button">Save</button>
       <button onClick={() => deleteDocument(documentId)} type="button">Delete</button>
     </div>
     

@@ -17,7 +17,7 @@ const router = express.Router();
  */
 router.post("/saveDocument", async (req, res) => {
   try {
-    const { id, content } = req.body;
+    const { id, content, title } = req.body;
 
     if (!content) {
       return res.status(400).json({ error: "Content required" });
@@ -36,6 +36,7 @@ router.post("/saveDocument", async (req, res) => {
 
       await docRef.update({
         content,
+        title,
         projectId: "1",
         ownerId: "test",
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
@@ -47,6 +48,7 @@ router.post("/saveDocument", async (req, res) => {
     // CREATE
     const docRef = await collection.add({
       content,
+      title,
       projectId: "1",
       ownerId: "test",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -67,6 +69,7 @@ router.post("/saveDocument", async (req, res) => {
 router.delete("/deleteDocument", async (req, res) =>{
   const collection = admin.firestore().collection("documents");
   const id = req.body.id;
+  
   try {await collection.doc(id).delete();}
   catch(err)
   {res.status(500).json({error: "Failed to delete document"})}
@@ -84,6 +87,7 @@ router.get("/fileTree", async (req, res) => {
   
       const documents = snapshot.docs.map(doc => ({
         id: doc.id,
+        title: doc.title,
         ...doc.data()
       }));
   

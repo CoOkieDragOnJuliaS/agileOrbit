@@ -55,7 +55,7 @@ export default function EpicTree() {
                 
               }
             >
-              {epic.content.replace(/<[^>]+>/g, "").slice(0, 30)}…
+              {epic.title.replace(/<[^>]+>/g, "").slice(0, 30)}…
             </button>
            
         

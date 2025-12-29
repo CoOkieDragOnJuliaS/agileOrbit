@@ -55,7 +55,7 @@ export default function DocumentTree() {
                 
               }
             >
-              {doc.content.replace(/<[^>]+>/g, "").slice(0, 30)}…
+              {doc.title.replace(/<[^>]+>/g, "").slice(0, 30)}
             </button>
            
         
