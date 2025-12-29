@@ -90,3 +90,76 @@ input {
   background-color: var(--bg-app);
   overflow-y: auto;
 }
+
+/* Dashboard-Styles */
+/*.dashboard-container {
+
+}
+
+.sidebarLeft {
+
+}
+
+.main-content {
+
+}
+
+.footer {
+
+}
+
+/* Kanban Board Styles */
+/*.kanban-container {
+
+}
+
+.user-profile {
+
+}
+
+.user-avatar {
+
+}
+
+.user-info {
+
+}
+
+.user-name {
+
+}
+
+.sign-out {
+
+}
+
+.sign-out:hover {
+
+}
+
+/* Responsive Design Dashboard */
+/*@media (max-width: 768px) {
+  .dashboard-container {
+
+  }
+  
+  .sidebar {
+
+  }
+  
+  .text {
+
+  }
+  
+  .user-profile {
+
+  }
+  
+  .main-content {
+
+  }
+  
+  .top-bar {
+
+  }
+}*/
