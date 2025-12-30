@@ -27,6 +27,7 @@ const serviceAccount = JSON.parse(await readFile(new URL('./serviceAccountKey.js
 import authRoutes from './Routes/authRoutes.js';
 import documentRoutes from './Routes/documentRoutes.js'
 import epicRoutes from './Routes/epicRoutes.js'
+import taskRoutes from './Routes/taskRoutes.js'
 
 /**
  * Firebase Admin SDK initialization
@@ -79,6 +80,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/epics', epicRoutes);
+app.use('/api/task', taskRoutes);
 
 // Import auth middleware after routes to avoid circular dependencies
 
