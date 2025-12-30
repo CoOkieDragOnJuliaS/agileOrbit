@@ -5,7 +5,14 @@ import 'react-quill/dist/quill.snow.css';
 //import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 //import { db } from '../../firebase';
 
-const saveEpic = async (content,epicId, title) => {
+
+
+export default function EpicEditor({ epicId, onSaved, onDeleted}) {
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState('');
+  const [title, setTitle] = useState('');
+
+  const saveEpic = async (content,epicId, title) => {
     //console.log("content:", content);
     await fetch("/api/epics/saveEpic", {
         method: "POST",
@@ -17,8 +24,23 @@ const saveEpic = async (content,epicId, title) => {
           content,
           title: title
         }),
-        
       });
+    
+};
+
+const deleteEpic = async (epicId) => {
+  //console.log("content:", content);
+  await fetch("/api/epics/deleteEpic", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: epicId
+      }),
+      
+    });
+
 };
 
 const loadEpic = async (epicId) => {
@@ -26,16 +48,19 @@ const loadEpic = async (epicId) => {
   if (!res.ok) {
     throw new Error("Failed to load epic");
   }
+
   return res.json();
 };
 
+const handleSave = async (content,epicId, title) => {
+  await saveEpic(content, epicId, title);
+  onSaved?.();
+};
 
-export default function EpicEditor({ epicId }) {
-  const [content, setContent] = useState('');
-  const [loading, setLoading] = useState('');
-  const [title, setTitle] = useState('');
-
-  console.log(epicId);
+const handleDelete = async (epicId) => {
+  await deleteEpic(epicId);
+  onDeleted?.();
+};
 
   useEffect(() => {
     if (!epicId) return;
@@ -57,19 +82,7 @@ export default function EpicEditor({ epicId }) {
   }, [epicId]);
 
 
-  const deleteEpic = async (epicId) => {
-    //console.log("content:", content);
-    await fetch("/api/epics/deleteEpic", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          id: epicId
-        }),
-        
-      });
-};
+ 
 
   if (loading) return <div>Lade Dokument…</div>;
 
@@ -90,8 +103,18 @@ export default function EpicEditor({ epicId }) {
         onChange={setContent}
         placeholder="Start writing your epic..."
       />
-      <button onClick={() => saveEpic(content,epicId, title)} type="button">Save</button>
-      <button onClick={() => deleteEpic(epicId)} type="button">Delete</button>
+      <button onClick={() => handleSave(content,epicId, title)} type="button">Save</button>
+      
+     {epicId && (
+  <button
+    onClick={() => handleDelete(epicId)}
+    type="button"
+    className="ml-2 px-4 py-2 bg-red-600 rounded"
+  >
+    Delete
+  </button>
+)}
+      
     </div>
     
   );

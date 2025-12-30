@@ -51,6 +51,13 @@ export default function DocumentArea() {
     }
   };
 
+    const [reloadKey, setReloadKey] = useState(0);
+    const [activeDocumentId, setActiveDocumentId] = useState(null);
+  
+    const triggerReload = () => {
+      setReloadKey(prev => prev + 1);
+    };
+
   const [showEditor, setShowEditor] = useState(false);
   
 
@@ -66,7 +73,13 @@ export default function DocumentArea() {
             </div>
             <div className="flex items-center">
               <span className="text-sm text-gray-700 mr-4">
-              <DocumentTree />
+              <DocumentTree 
+                                reloadKey={reloadKey}
+                                onSelectDocument={(id) => {
+                                  setActiveDocumentId(id);
+                                  setShowEditor(true);
+                                }}
+                                />
               </span>
               <button
                 onClick={handleSignOut}
@@ -90,13 +103,22 @@ export default function DocumentArea() {
                 </p>
                 <div id="main" className="p-4">
                   <button
-                    onClick={() => setShowEditor(prev => !prev)}
+                    onClick={() => {
+                      setShowEditor(prev => !prev)
+                      setActiveDocumentId(null)
+                    }}
                     className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded"
                   >
                     {showEditor ? "Editor schließen" : "Neues Dokument"}
                   </button>
 
-      {showEditor && <DocumentEditor />}
+      {showEditor && <DocumentEditor  documentId={activeDocumentId}
+      onSaved={triggerReload}
+      onDeleted={() => {
+      triggerReload();
+      setActiveDocumentId(null);
+      setShowEditor(false);
+    }}/>}
     </div>
                 
 

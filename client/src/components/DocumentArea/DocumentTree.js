@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DocumentEditor from './DocumentEditor';
 
-export default function DocumentTree() {
+export default function DocumentTree({reloadKey, onSelectDocument}) {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +21,7 @@ export default function DocumentTree() {
     };
 
     fetchDocuments();
-  }, []);
+  }, [reloadKey]);
 
   /*const loadDocument = async (docId) => {
     try {
@@ -48,22 +48,19 @@ export default function DocumentTree() {
             <li key={doc.id} className="mb-2">
             <button
               className="text-indigo-600 hover:underline"
-              onClick={() =>
+              onClick={() => {
                 setActiveDocumentId((prev) =>
                   prev === doc.id ? null : doc.id
                 )
-                
+                onSelectDocument(doc.id);
+              }
               }
             >
               {doc.title.replace(/<[^>]+>/g, "").slice(0, 30)}
             </button>
            
         
-            {activeDocumentId === doc.id && (
-              <div className="mt-2">
-                <DocumentEditor documentId={doc.id} />
-              </div>
-            )}
+            
           </li>
         
         ))}

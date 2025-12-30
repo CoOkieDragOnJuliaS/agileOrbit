@@ -70,10 +70,13 @@ router.delete("/deleteDocument", async (req, res) =>{
   const collection = admin.firestore().collection("documents");
   const id = req.body.id;
   
-  try {await collection.doc(id).delete();}
+  try 
+  {
+    await collection.doc(id).delete();
+  }
   catch(err)
   {res.status(500).json({error: "Failed to delete document"})}
-  
+  res.status(201).json({ id: docRef.id });
 });
 
 router.get("/fileTree", async (req, res) => {

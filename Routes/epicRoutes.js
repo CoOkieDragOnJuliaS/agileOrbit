@@ -68,7 +68,10 @@ router.post("/saveEpic", async (req, res) => {
 router.delete("/deleteEpic", async (req, res) =>{
   const collection = admin.firestore().collection("epics");
   const id = req.body.id;
-  try {await collection.doc(id).delete();}
+  try {
+        await collection.doc(id).delete();
+        res.status(201).json({ id: id });
+      }
   catch(err)
   {res.status(500).json({error: "Failed to delete epic"})}
   

@@ -5,7 +5,14 @@ import 'react-quill/dist/quill.snow.css';
 //import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 //import { db } from '../../firebase';
 
-const saveDocument = async (content,docId, title) => {
+
+
+export default function DocumentEditor({ documentId, onSaved, onDeleted }) {
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState('');
+  const [title, setTitle] = useState('');
+
+  const saveDocument = async (content,docId, title) => {
     //console.log("content:", content);
     await fetch("/api/documents/saveDocument", {
         method: "POST",
@@ -29,13 +36,15 @@ const loadDocument = async (docId) => {
   return res.json();
 };
 
+const handleSave = async (content,documentId, title) => {
+  await saveDocument(content, documentId, title);
+  onSaved?.();
+};
 
-export default function DocumentEditor({ documentId }) {
-  const [content, setContent] = useState('');
-  const [loading, setLoading] = useState('');
-  const [title, setTitle] = useState('');
-
-  console.log(documentId);
+const handleDelete = async (documentId) => {
+  await deleteDocument(documentId);
+  onDeleted?.();
+};
 
   useEffect(() => {
     if (!documentId) return;
@@ -95,8 +104,16 @@ export default function DocumentEditor({ documentId }) {
         onChange={setContent}
         placeholder="Start writing your document..."
       />
-      <button onClick={() => saveDocument(content,documentId, title)} type="button">Save</button>
-      <button onClick={() => deleteDocument(documentId)} type="button">Delete</button>
+      <button onClick={() => handleSave(content,documentId, title)} type="button">Save</button>
+      {documentId && (
+  <button
+    onClick={() => handleDelete(documentId)}
+    type="button"
+    className="ml-2 px-4 py-2 bg-red-600 rounded"
+  >
+    Delete
+  </button>
+)}
     </div>
     
   );

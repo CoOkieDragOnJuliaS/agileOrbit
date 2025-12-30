@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import EpicEditor from './EpicEditor';
 
-export default function EpicTree() {
+export default function EpicTree({reloadKey, onSelectEpic}) {
   const [epics, setEpics] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,19 +21,8 @@ export default function EpicTree() {
     };
 
     fetchEpics();
-  }, []);
+  }, [reloadKey]);
 
-  /*const loadDocument = async (docId) => {
-    try {
-      const res = await fetch(`/api/documents/${docId}`);
-      const data = await res.json();
-      setContent(data.content || "");
-    } catch (err) {
-      console.error("Failed to load document", err);
-    } finally {
-      setLoading(false);
-    }
-  };*/
 
   const [activeEpicId, setActiveEpicId] = useState(false);
 
@@ -48,22 +37,19 @@ export default function EpicTree() {
             <li key={epic.id} className="mb-2">
             <button
               className="text-indigo-600 hover:underline"
-              onClick={() =>
+              onClick={() => {
                 setActiveEpicId((prev) =>
                   prev === epic.id ? null : epic.id
                 )
-                
+                onSelectEpic(epic.id);
+              }
               }
             >
               {epic.title.replace(/<[^>]+>/g, "").slice(0, 30)}…
             </button>
            
         
-            {activeEpicId === epic.id && (
-              <div className="mt-2">
-                <EpicEditor epicId={epic.id} />
-              </div>
-            )}
+           
           </li>
         
         ))}
