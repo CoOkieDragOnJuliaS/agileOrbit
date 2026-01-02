@@ -1,23 +1,277 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './KanbanBoard.css';
-function KanbanBoard() {
-    const [tasks, setTasks] = useState({
-        todo: [],
-        inProgress: [],
-        test: [],
-        done: []
-    });
+import TaskModal from './TaskModal';
 
+// Base URL for the task API endpoints - using relative URL to work with proxy
+const API_BASE_URL = '/api/task';
+
+/**
+ * KanbanBoard Component
+ * A drag-and-drop task management board with four columns:
+ * - To Do
+ * - In Progress
+ * - In Test
+ * - Done
+ * 
+ * Features:
+ * - View tasks in their respective status columns
+ * - Add new tasks to any column
+ * - Edit task titles and descriptions inline
+ * - Delete tasks
+ * - Real-time updates when changes are made
+ */
+function KanbanBoard() {
+    /**
+     * State Management:
+     * - tasks: Object containing arrays of tasks grouped by their status
+     *   - todo: Tasks that haven't been started
+     *   - inProgress: Tasks currently being worked on
+     *   - test: Tasks in testing/QA phase
+     *   - done: Completed tasks
+     * - isLoading: Tracks loading state for API operations
+     * - error: Stores any error messages from API calls
+     * - selectedTask: Currently selected task for viewing/editing in the modal
+     */
+    const [tasks, setTasks] = useState({
+        todo: [],        // Tasks that haven't been started
+        inProgress: [],  // Tasks currently being worked on
+        test: [],        // Tasks in testing/QA phase
+        done: []         // Completed tasks
+    });
+    
+    const [isLoading, setIsLoading] = useState(true);  // Loading state for API calls
+    const [error, setError] = useState(null);          // Error state for API errors
+    const [selectedTask, setSelectedTask] = useState(null); // Currently selected task for editing
+
+    /**
+     * Fetches all tasks from the server and updates the component state
+     * Handles loading states and errors
+     */
+    const fetchTasks = async () => {
+        try {
+            setIsLoading(true);
+            console.log('Fetching tasks from:', `${API_BASE_URL}/board`);
+            
+            // Make API request to fetch tasks
+            const response = await fetch(`${API_BASE_URL}/board`, {
+                credentials: 'include'  // Important for including authentication cookies
+            });
+            
+            // Handle non-2xx responses
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Failed to fetch tasks:', response.status, errorText);
+                throw new Error(`Failed to fetch tasks: ${response.status} ${errorText}`);
+            }
+            
+            // Parse and update tasks state with the response
+            const data = await response.json();
+            console.log('Received tasks data:', data);
+            setTasks(data);
+        } catch (err) {
+            console.error('Error fetching tasks:', err);
+            setError('Failed to load tasks. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    /**
+     * Creates a new task with the specified status
+     * @param {string} status - The status/column where the task should be created
+     * Automatically refreshes the task list after creation
+     */
+    const createTask = async (status) => {
+        try {
+            const newTask = {
+                title: 'New Task',
+                description: 'Click to edit',
+                status,
+                boardID: 'default-board' // TODO: Replace with actual board ID from props or context
+            };
+
+            console.log('Creating task with data:', newTask);
+
+            const response = await fetch(API_BASE_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(newTask),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create task');
+            }
+
+            // Refresh the task list
+            await fetchTasks();
+        } catch (err) {
+            console.error('Error creating task:', err);
+            setError('Failed to create task. Please try again.');
+        }
+    };
+
+    /**
+     * Updates an existing task with new data
+     * @param {string} taskId - ID of the task to update
+     * @param {object} updates - Object containing fields to update (e.g., { title: 'New Title' })
+     * Automatically refreshes the task list after update
+     */
+    const updateTask = async (taskId, updates) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(updates),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update task');
+            }
+
+            // Refresh the task list
+            await fetchTasks();
+        } catch (err) {
+            console.error('Error updating task:', err);
+            setError('Failed to update task. Please try again.');
+        }
+    };
+
+    /**
+     * Deletes a task by ID
+     * @param {string} taskId - ID of the task to delete
+     * Shows a confirmation dialog before deletion
+     * Automatically refreshes the task list after deletion
+     */
+    const deleteTask = async (taskId) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/${taskId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete task');
+            }
+
+            // Refresh the task list
+            await fetchTasks();
+        } catch (err) {
+            console.error('Error deleting task:', err);
+            setError('Failed to delete task. Please try again.');
+        }
+    };
+
+    /**
+     * Handles task field updates (title, description, etc.)
+     * @param {string} taskId - ID of the task being edited
+     * @param {object} updates - Object containing the updated fields
+     * Debounced to prevent too many API calls during rapid typing
+     */
+    const handleTaskEdit = async (taskId, updates) => {
+        await updateTask(taskId, updates);
+    };
+
+    const handleTaskClick = (task) => {
+        setSelectedTask(task);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedTask(null);
+    };
+
+    const handleSaveTask = async (updatedData) => {
+        if (!selectedTask) return;
+        
+        try {
+            await updateTask(selectedTask.id, updatedData);
+            setSelectedTask(null);
+        } catch (err) {
+            console.error('Error saving task:', err);
+            setError('Failed to save task. Please try again.');
+        }
+    };
+
+    const handleDeleteTask = async () => {
+        if (!selectedTask) return;
+        
+        if (window.confirm('Are you sure you want to delete this task?')) {
+            try {
+                await deleteTask(selectedTask.id);
+                setSelectedTask(null);
+            } catch (err) {
+                console.error('Error deleting task:', err);
+                setError('Failed to delete task. Please try again.');
+            }
+        }
+    };
+
+    /**
+     * Effect hook to fetch tasks when the component mounts
+     * The empty dependency array ensures this only runs once on mount
+     */
+    useEffect(() => {
+        console.log('Component mounted, fetching tasks...');
+        fetchTasks().catch(err => {
+            console.error('Error in fetchTasks:', err);
+            setError('Failed to load tasks. Please refresh the page.');
+        });
+        
+        // Optional: Cleanup function if needed
+        return () => {
+            console.log('KanbanBoard unmounting...');
+        };
+    }, []);
+
+    /**
+     * Renders an empty state message for columns with no tasks
+     * @returns {JSX.Element} Empty state UI component
+     */
     const renderEmptyState = () => (
         <div className="empty-state">
             <p>No tasks yet. Click + to add a new task.</p>
         </div>
     );
 
+    /**
+     * Renders a single task card
+     * @param {object} task - The task object to render
+     * @returns {JSX.Element} Task card component with edit and delete functionality
+     */
+    const renderTaskCard = (task) => {
+        return (
+            <div 
+                key={task.id} 
+                className="kanban-card"
+                onClick={() => handleTaskClick(task)}
+            >
+                <h4>{task.title}</h4>
+                <p>{task.description || 'No description'}</p>
+                <div className="card-footer">
+                    <span className="date">
+                        {task.updatedAt ? new Date(task.updatedAt.seconds * 1000).toLocaleDateString() : 'Just now'}
+                    </span>
+                    <span className="status-badge">
+                        {task.status || 'todo'}
+                    </span>
+                </div>
+            </div>
+        );
+    };
+
+    /**
+     * Renders a single Kanban column with its tasks
+     * @param {string} column - The column key (e.g., 'todo', 'inProgress')
+     * @param {string} title - The display title for the column
+     * @returns {JSX.Element} Column component with header and task cards
+     */
     const renderKanbanColumn = (column, title) => (
-        <div
-            className="kanban-column"
-            key={column}>
+        <div className="kanban-column" key={column}>
             <div className="kanban-column-header">
                 <div className="column-title">
                     <h3>{title}</h3>
@@ -25,34 +279,20 @@ function KanbanBoard() {
                 </div>
                 <button 
                     className="add-card-btn" 
-                    onClick={() => {
-                        const newTask = {
-                            id: Date.now(),
-                            title: 'New Task',
-                            description: 'Click to edit',
-                            date: new Date().toLocaleDateString()
-                        };
-                        setTasks(prev => ({
-                            ...prev,
-                            [column]: [...prev[column], newTask]
-                        }));
-                    }}>
-                    +
+                    onClick={() => createTask(column)}
+                    disabled={isLoading}
+                >
+                    {isLoading ? '...' : '+'}
                 </button>
             </div>
 
-
             <div className="kanban-cards">
-                {tasks[column] && tasks[column].length > 0 ? (
-                    tasks[column].map(task => (
-                        <div key={task.id} className="kanban-card">
-                            <h4>{task.title}</h4>
-                            <p>{task.description}</p>
-                            <div className="card-footer">
-                                <span className="date">{task.date}</span>
-                            </div>
-                        </div>
-                    ))
+                {isLoading ? (
+                    <div className="loading-state">Loading tasks...</div>
+                ) : error ? (
+                    <div className="error-state">{error}</div>
+                ) : tasks[column] && tasks[column].length > 0 ? (
+                    tasks[column].map(renderTaskCard)
                 ) : (
                     renderEmptyState()
                 )}
@@ -61,12 +301,23 @@ function KanbanBoard() {
     );
 
     return (
-        <div className="kanban-board">
-            {renderKanbanColumn('todo', 'To Do')}
-            {renderKanbanColumn('inProgress', 'In Progress')}
-            {renderKanbanColumn('test', 'In Test')}
-            {renderKanbanColumn('done', 'Done')}
-        </div>
+        <>
+            <div className="kanban-board">
+                {renderKanbanColumn('todo', 'To Do')}
+                {renderKanbanColumn('inProgress', 'In Progress')}
+                {renderKanbanColumn('test', 'In Test')}
+                {renderKanbanColumn('done', 'Done')}
+            </div>
+            
+            {selectedTask && (
+                <TaskModal 
+                    task={selectedTask}
+                    onClose={handleCloseModal}
+                    onSave={handleSaveTask}
+                    onDelete={handleDeleteTask}
+                />
+            )}
+        </>
     );
 }
 
