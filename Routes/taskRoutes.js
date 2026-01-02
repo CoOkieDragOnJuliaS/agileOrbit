@@ -208,7 +208,7 @@ router.post("/saveTask", async (req, res) => {
       }
 
       await taskRef.update({
-        boardID: borardId,  // Map boardId from request to boardID in database
+        boardID: boardID,  // Map boardId from request to boardID in database
         content,
         title,
         epicId: "1",
@@ -221,7 +221,7 @@ router.post("/saveTask", async (req, res) => {
 
     // CREATE
     const taskRef = await collection.add({
-      boardID: borardId,  // Map boardId from request to boardID in database
+      boardID: boardID,  // Map boardId from request to boardID in database
       content,
       title,
       epicId: "1",
