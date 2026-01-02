@@ -16,9 +16,10 @@ const API_BASE_URL = '/api/task';
  * Features:
  * - View tasks in their respective status columns
  * - Add new tasks to any column
- * - Edit task titles and descriptions inline
- * - Delete tasks
- * - Real-time updates when changes are made
+ * - Edit task titles and descriptions in Modal window
+ * - Edit status in Modal window (without Drag & Drop)
+ * - Delete tasks in Modal window
+ * - Real-time updates when changes are made (refreshing overlay)
  */
 function KanbanBoard() {
     /**
@@ -45,6 +46,7 @@ function KanbanBoard() {
 
     /**
      * Fetches all tasks from the server and updates the component state
+     * Is the autmatic refresh tactic after changes are made
      * Handles loading states and errors
      */
     const fetchTasks = async () => {
@@ -173,10 +175,6 @@ function KanbanBoard() {
      * @param {object} updates - Object containing the updated fields
      * Debounced to prevent too many API calls during rapid typing
      */
-    const handleTaskEdit = async (taskId, updates) => {
-        await updateTask(taskId, updates);
-    };
-
     const handleTaskClick = (task) => {
         setSelectedTask(task);
     };
