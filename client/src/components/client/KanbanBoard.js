@@ -236,12 +236,38 @@ function KanbanBoard() {
         </div>
     );
 
+    const formatDate = (timestamp) => {
+        try {
+            // Handle Firestore timestamp object with _seconds
+            if (timestamp && typeof timestamp === 'object' && '_seconds' in timestamp) {
+                return new Date(timestamp._seconds * 1000).toLocaleDateString();
+            }
+            // Handle Firestore timestamp with toDate method
+            if (timestamp && typeof timestamp.toDate === 'function') {
+                return timestamp.toDate().toLocaleDateString();
+            }
+            // Handle Date object or date string
+            const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleDateString();
+            }
+            return 'Just now';
+        } catch (e) {
+            console.error('Error formatting date:', e, 'Timestamp:', timestamp);
+            return 'Just now';
+        }
+    };
+
     /**
      * Renders a single task card
      * @param {object} task - The task object to render
      * @returns {JSX.Element} Task card component with edit and delete functionality
      */
     const renderTaskCard = (task) => {
+        console.log('Task object:', task);
+        console.log('CreatedAt value:', task.createdAt);
+        console.log('Type of createdAt:', typeof task.createdAt);
+
         return (
             <div 
                 key={task.id} 
@@ -252,10 +278,7 @@ function KanbanBoard() {
                 <p>{task.description || 'No description'}</p>
                 <div className="card-footer">
                     <span className="date">
-                        {task.updatedAt ? new Date(task.updatedAt.seconds * 1000).toLocaleDateString() : 'Just now'}
-                    </span>
-                    <span className="status-badge">
-                        {task.status || 'todo'}
+                        {task.createdAt ? formatDate(task.createdAt) : 'Just now'}
                     </span>
                 </div>
             </div>
