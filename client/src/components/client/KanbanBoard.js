@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './KanbanBoard.css';
 import TaskModal from './TaskModal';
 
@@ -42,8 +42,39 @@ function KanbanBoard() {
     
     const [isLoading, setIsLoading] = useState(true);  // Loading state for API calls
     const [error, setError] = useState(null);          // Error state for API errors
+    const [subtasks, setSubtasks] = useState({});
     const [selectedTask, setSelectedTask] = useState(null); // Currently selected task for editing
 
+    //Fetching subtasks for the task count
+    const fetchSubtasks = async (taskIds) => {
+        const subtaskPromises = taskIds.map(async (taskId) => {
+            try {
+                const response = await fetch(`/api/subtasks/${taskId}`, {
+                    credentials: 'include'
+                });
+                if (!response.ok) {
+                    console.error(`Failed to fetch subtasks for task ${taskId}:`, response.status);
+                    return { taskId, subtasks: [] };
+                }
+                const subtasks = await response.json();
+                return { taskId, subtasks };
+            } catch (error) {
+                console.error(`Error fetching subtasks for task ${taskId}:`, error);
+                return { taskId, subtasks: [] };
+            }
+        });
+        const subtasksResults = await Promise.all(subtaskPromises);
+        const subtasksByTask = {};
+        
+        subtasksResults.forEach(({ taskId, subtasks }) => {
+            if (subtasks && subtasks.length > 0) {
+                subtasksByTask[taskId] = subtasks;
+            }
+        });
+        
+        setSubtasks(subtasksByTask);
+    };
+    
     /**
      * Fetches all tasks from the server and updates the component state
      * Is the autmatic refresh tactic after changes are made
@@ -70,12 +101,30 @@ function KanbanBoard() {
             const data = await response.json();
             console.log('Received tasks data:', data);
             setTasks(data);
+
+
+            const taskIds = Object.values(data).flat().map(task => task.id);
+            if (taskIds.length > 0) {
+                await fetchSubtasks(taskIds);
+            }
         } catch (err) {
             console.error('Error fetching tasks:', err);
             setError('Failed to load tasks. Please try again.');
         } finally {
             setIsLoading(false);
         }
+    };
+
+
+    const refreshTaskSubtasks = async (taskId) => {
+        const taskSubtasks = await fetch(`/api/subtasks/${taskId}`, {
+            credentials: 'include'
+        }).then(res => res.ok ? res.json() : []);
+        
+        setSubtasks(prev => ({
+            ...prev,
+            [taskId]: taskSubtasks
+        }));
     };
 
     /**
@@ -188,6 +237,7 @@ function KanbanBoard() {
         
         try {
             await updateTask(selectedTask.id, updatedData);
+            await refreshTaskSubtasks(selectedTask.id);
             setSelectedTask(null);
         } catch (err) {
             console.error('Error saving task:', err);
@@ -232,7 +282,9 @@ function KanbanBoard() {
             window.removeEventListener('resize', checkTruncation);
         };
     }, [tasks]); // Re-run when tasks change
-    // Keep your existing fetch effect separate
+
+
+    // Keeping the existing fetch effect separate
     useEffect(() => {
         console.log('Component mounted, fetching tasks...');
         fetchTasks().catch(err => {
@@ -279,7 +331,10 @@ function KanbanBoard() {
      * @returns {JSX.Element} Task card component with edit and delete functionality
      */
     const renderTaskCard = (task) => {
-
+        const taskSubtasks = subtasks[task.id] || [];
+        const completedCount = taskSubtasks.filter(st => st.status === 'completed').length;
+        const totalCount = taskSubtasks.length;
+   
         return (
             <div 
                 key={task.id} 
@@ -292,6 +347,11 @@ function KanbanBoard() {
                     <span className="date">
                         {task.createdAt ? formatDate(task.createdAt) : 'Just now'}
                     </span>
+                    {totalCount > 0 && (
+                    <span className="subtask-badge">
+                        {completedCount}/{totalCount} Subtasks
+                    </span>
+                )}
                 </div>
             </div>
         );
