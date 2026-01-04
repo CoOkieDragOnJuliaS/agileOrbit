@@ -102,7 +102,7 @@
     width: 100%; /* Ensure the container has a defined width */
 }
 
-.kanban-card p {
+.kanban-card .description {
     margin: 0 0 8px 0;
     color: #4a5568;
     font-size: 13px;
@@ -113,7 +113,7 @@
 }
 
 /* Gradient fade effect for non-truncated text */
-.kanban-card p:not(.truncated)::after {
+.kanban-card .description:not(.truncated)::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -124,16 +124,24 @@
         rgba(255,255,255,0) 0%, 
         rgba(255,255,255,0.9) 100%
     );
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s ease;
+}
+
+/* Show fade effect only when text is truncated */
+.kanban-card .description.truncated::after {
+    opacity: 1;
 }
 
 /* Ellipsis for truncated text */
-.kanban-card p.truncated::after {
+.kanban-card .description.truncated::before {
     content: '...';
     position: absolute;
     bottom: 0;
     right: 0;
     background: white;
     padding-left: 4px;
+    z-index: 1;
 }
 
 .card-footer {

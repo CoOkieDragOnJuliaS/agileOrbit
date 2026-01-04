@@ -213,18 +213,33 @@ function KanbanBoard() {
      * Effect hook to fetch tasks when the component mounts
      * The empty dependency array ensures this only runs once on mount
      */
+    // Add this new effect specifically for handling truncation
+    useEffect(() => {
+        const checkTruncation = () => {
+            document.querySelectorAll('.kanban-card .description').forEach(p => {
+                const isTruncated = p.scrollHeight > p.clientHeight;
+                p.classList.toggle('truncated', isTruncated);
+            });
+        };
+        // Initial check after a small delay to ensure DOM is rendered
+        const timer = setTimeout(checkTruncation, 100);
+        
+        // Check when window is resized
+        window.addEventListener('resize', checkTruncation);
+        
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener('resize', checkTruncation);
+        };
+    }, [tasks]); // Re-run when tasks change
+    // Keep your existing fetch effect separate
     useEffect(() => {
         console.log('Component mounted, fetching tasks...');
         fetchTasks().catch(err => {
             console.error('Error in fetchTasks:', err);
             setError('Failed to load tasks. Please refresh the page.');
         });
-        
-        // Optional: Cleanup function if needed
-        return () => {
-            console.log('KanbanBoard unmounting...');
-        };
-    }, []);
+    }, []); // This should only run once on mount
 
     /**
      * Renders an empty state message for columns with no tasks
@@ -264,9 +279,6 @@ function KanbanBoard() {
      * @returns {JSX.Element} Task card component with edit and delete functionality
      */
     const renderTaskCard = (task) => {
-        console.log('Task object:', task);
-        console.log('CreatedAt value:', task.createdAt);
-        console.log('Type of createdAt:', typeof task.createdAt);
 
         return (
             <div 
@@ -275,7 +287,7 @@ function KanbanBoard() {
                 onClick={() => handleTaskClick(task)}
             >
                 <h4>{task.title}</h4>
-                <p>{task.description || 'No description'}</p>
+                <p className="description">{task.description || 'No description'}</p>
                 <div className="card-footer">
                     <span className="date">
                         {task.createdAt ? formatDate(task.createdAt) : 'Just now'}
