@@ -287,10 +287,15 @@ function KanbanBoard() {
     // Keeping the existing fetch effect separate
     useEffect(() => {
         console.log('Component mounted, fetching tasks...');
-        fetchTasks().catch(err => {
+        const loadTasks = async () => {
+        try {
+            await fetchTasks();
+        } catch (err) {
             console.error('Error in fetchTasks:', err);
             setError('Failed to load tasks. Please refresh the page.');
-        });
+        }
+        };
+        loadTasks();
     }, []); // This should only run once on mount
 
     /**
