@@ -29,6 +29,7 @@ import documentRoutes from './Routes/documentRoutes.js'
 import epicRoutes from './Routes/epicRoutes.js'
 import taskRoutes from './Routes/taskRoutes.js'
 import subtaskRoutes from './Routes/subtaskRoutes.js'
+import whiteboardRoutes from './Routes/whiteboardRoutes.js';
 
 /**
  * Firebase Admin SDK initialization
@@ -83,6 +84,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/epics', epicRoutes);
 app.use('/api/task', taskRoutes);
 app.use('/api/subtasks', subtaskRoutes);
+app.use('/api/whiteboards', whiteboardRoutes);
 
 // Import auth middleware after routes to avoid circular dependencies
 
