@@ -40,22 +40,19 @@
     position: relative;
 }
 
-/* Close button in the top-right corner */
-.close-btn {
-    position: absolute; /* Position relative to modal-content */
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 24px; /* Larger size for better clickability */
-    cursor: pointer; /* Changes cursor to pointer on hover */
-    padding: 5px 10px; /* Clickable area */
-    line-height: 1; /* Better vertical alignment */
-    color: #666;
+/* Header section */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    padding-right: 40px; /* Space for the close button */
 }
 
-.close-btn:hover {
-    color: #333;
+.modal-header h2 {
+    margin: 0;
+    flex-grow: 1; /* take available space with flex-grow */
 }
 
 /* ===== 2. Typography ===== */
@@ -147,6 +144,46 @@ textarea {
 
 .btn-delete:hover {
     background-color: #e04f4f;
+}
+
+/* Document creation button */
+.createDocument-btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+    color: #666;
+    transition: all 0.2s;
+    margin-left: 10px;
+}
+.createDocument-btn:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+    color: #333;
+}
+
+/* Close button in the top-right corner */
+.close-btn {
+    position: absolute; /* Position relative to modal-content */
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px; /* Larger size for better clickability */
+    cursor: pointer; /* Changes cursor to pointer on hover */
+    padding: 5px 10px; /* Clickable area */
+    line-height: 1; /* Better vertical alignment */
+    color: #666;
+}
+
+.close-btn:hover {
+    color: #333;
 }
 
 /* ===== 5. Subtasks ===== */

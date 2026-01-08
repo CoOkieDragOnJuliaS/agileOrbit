@@ -34,7 +34,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
      * - isSaving: Tracks if a save operation is in progress
      */
 
-    //Initializing navigation to another component with React
+     //Initializing navigation to another component with React
     const navigate = useNavigate();
     /**
      * Effect hook to handle clicks outside the modal content
@@ -277,15 +277,21 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <button className="close-btn" onClick={onClose}>×</button>
-                <button className="createDocument-btn" onClick={
-                    () => {
-                        navigate('/documents/new', {
-                            state: {taskId: task.id}
-                        });
-                    }
-                }>&#xf15c;</button>
-                <h2>Edit Task</h2>
+                <button className="close-btn" onClick={onClose}>[×]</button>
+                <div className="modal-header">
+                    <h2>Edit Task</h2>
+                    <button
+                        className="createDocument-btn"
+                        onClick={() => {
+                            navigate('/documents/new', {
+                                state: {taskId: task.id}
+                            });
+                        }}
+                        title="Create Document"
+                    >
+                        📄
+                    </button>
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Title</label>
@@ -361,6 +367,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                                                     <button
                                                         className="btn btn-sm btn-primary me-2"
                                                         onClick={(e) => handleDescriptionSave(e, subtask.id)}
+                                                        title="Save Description to current subtask"
                                                     >
                                                         Save
                                                     </button>
@@ -371,6 +378,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                                                             setEditingSubtaskId(null);
                                                             setEditingDescription('');
                                                         }}
+                                                        title="Cancel editing current subtask"
                                                     >
                                                         Cancel
                                                     </button>
@@ -404,6 +412,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                                         handleAddSubtask(e);
                                     }}
                                     disabled={!newSubtask.trim()}
+                                    title="Add subtask to current task"
                                 >
                                     Add
                                 </button>
