@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {useLocation} from "react-router-dom";
+import './DocumentArea.css';
 
 //import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 //import { db } from '../../firebase';
@@ -14,22 +15,28 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
     const location = useLocation();
     const taskId = location.state?.taskId;
 
-    const saveDocument = async (content, docId, title) => {
+    const saveDocument = useCallback(async (content, docId, title) => {
         //console.log("content:", content);
-        await fetch("/api/documents/saveDocument", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                id: docId,
-                content,
-                title: title,
-                taskId: taskId || undefined // Only include taskId if it exists
-            }),
+        try {
+            const response = await fetch("/api/documents/saveDocument", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: docId,
+                    content,
+                    title: title,
+                    taskId: taskId || undefined // Only include taskId if it exists
+                }),
 
-        });
-    };
+            });
+            return await response.json();
+        }catch (error) {
+            console.error('Error saving document:', error);
+            throw error;
+        }
+    }, [taskId]);
 
     const loadDocument = async (docId) => {
         const res = await fetch(`/api/documents/${docId}`);
@@ -39,10 +46,14 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
         return res.json();
     };
 
-    const handleSave = async (content, documentId, title) => {
-        await saveDocument(content, documentId, title);
-        onSaved?.();
-    };
+    const handleSave = useCallback(async (content) => {
+        try {
+            const savedDocument = await saveDocument(content, documentId, title);
+            onSaved?.(savedDocument?.id);
+        } catch (error) {
+            console.error("Error saving document:", error);
+        }
+    }, [saveDocument,documentId, title, onSaved]);
 
     const handleDelete = async (documentId) => {
         await deleteDocument(documentId);
@@ -50,9 +61,14 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
     };
 
     useEffect(() => {
-        if (!documentId) return;
-
         const fetchDocument = async () => {
+
+            if (!documentId) {
+                setContent('');
+                setTitle('Untitled Document');
+                return;
+            }
+
             try {
                 setLoading(true);
                 const data = await loadDocument(documentId);
@@ -88,34 +104,46 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
 
     return (
 
-        <div className="bg-white rounded-md shadow p-4">
-
-            <div className="mb-3">
+        <div className="editor-container">
+            <div className="editor-header">
                 <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Document title"
-                    className="w-full border px-2 py-1 rounded"
+                    className="title-input"
                 />
             </div>
 
-            <ReactQuill
-                theme="snow"
-                value={content}
-                onChange={setContent}
-                placeholder="Start writing your document..."
-            />
-            <button onClick={() => handleSave(content, documentId, title)} type="button">Save</button>
-            {documentId && (
-                <button
-                    onClick={() => handleDelete(documentId)}
-                    type="button"
-                    className="ml-2 px-4 py-2 bg-red-600 rounded"
-                >
-                    Delete
+            <div className="editor-actions">
+                <button onClick={() => handleSave(content)} type="button">
+                    Save
                 </button>
-            )}
+                {documentId && (
+                    <button
+                        onClick={() => handleDelete(documentId)}
+                        type="button"
+                        className="btn-delete"
+                    >
+                        Delete
+                    </button>
+                )}
+            </div>
+
+            <div className="editor-content">
+                <ReactQuill
+                    theme="snow"
+                    value={content}
+                    onChange={(content) => {
+                        setContent(content);
+                        // Only auto-save if document has an ID (existing document)
+                        if (documentId) {
+                            handleSave(content);
+                        }
+                    }}
+                    placeholder="Start writing your document..."
+                />
+            </div>
         </div>
 
     );

@@ -1,3 +1,4 @@
+/* Kanban Board style */
 .kanban-board {
     display: flex; /* Uses flex layout for horizontal alignment of columns */
     gap: 16px; /* Reduced gap between columns */
@@ -7,10 +8,11 @@
     min-height: 500px; /* Minimum height of the board */
     align-items: flex-start; /* Align columns to the top */
 }
+
 .kanban-column {
     background-color: #ffffff; /* Background color of each column */
     border-radius: 8px; /* Rounded corners for columns */
-    border: dashed rgb(0,0,0,0.5);
+    border: dashed rgb(0, 0, 0, 0.5);
     padding: 16px; /* Inner spacing inside each column */
     width: 280px; /* Fixed width for all columns */
     flex: 0 0 280px; /* Don't grow, don't shrink, fixed width */
@@ -19,6 +21,7 @@
     flex-direction: column; /* Stacks children vertically */
     overflow: hidden; /* Prevents content from overflowing */
 }
+
 .kanban-column-header {
     display: flex; /* Flex layout for header content */
     justify-content: space-between; /* Space between title and button */
@@ -27,12 +30,14 @@
     padding-bottom: 12px; /* Inner bottom padding of header */
     border-bottom: 2px solid #e2e8f0; /* Bottom border for separation */
 }
+
 .kanban-column-header h3 {
     margin: 0; /* Remove default margin */
     color: black; /* Text color */
     font-size: 16px; /* Font size  */
     font-weight: 600; /* Bold font weight */
 }
+
 .add-card-btn {
     background: #4299e1; /* Button background color */
     color: white; /* Text color */
@@ -47,9 +52,12 @@
     font-size: 20px; /* Font size */
     line-height: 1; /* Line height equal to font size */
 }
+
 .add-card-btn:hover {
     background: #3182ce;
 }
+
+/* Kanban cards (tasks) style */
 .kanban-cards {
     flex: 1; /* Take remaining space in flex container */
     overflow-y: auto; /* Vertical scrollbar if content overflows */
@@ -57,18 +65,22 @@
     padding-right: 4px;
     min-height: 100px; /* Ensure columns have a minimum height */
 }
+
 /* Custom scrollbar styling for Webkit browsers, information from the web */
 .kanban-cards::-webkit-scrollbar {
     width: 6px; /* Scrollbar width */
 }
+
 .kanban-cards::-webkit-scrollbar-track {
     background: #f1f1f1; /* Track background */
     border-radius: 3px; /* Rounded edges */
 }
+
 .kanban-cards::-webkit-scrollbar-thumb {
     background: #cbd5e0; /* Scrollbar thumb color */
     border-radius: 3px; /* Rounded edges */
 }
+
 .kanban-cards::-webkit-scrollbar-thumb:hover {
     background: #a0aec0; /* Hover color for thumb */
 }
@@ -76,7 +88,7 @@
 .kanban-card {
     background: white; /* Card background */
     border-radius: 6px; /* Rounded corners for cards */
-    border: dashed rgb(0,0,0,0.2);
+    border: dashed rgb(0, 0, 0, 0.2);
     padding: 12px; /* Inner spacing */
     margin-bottom: 12px; /* Space below each card */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
@@ -85,6 +97,7 @@
     word-wrap: break-word; /* Ensure long words don't overflow */
     overflow: hidden; /* Hide any content that overflows */
 }
+
 .kanban-card:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Enhanced shadow on hover */
@@ -92,6 +105,7 @@
     transform: translateY(-2px); /* Slight lift effect */
     cursor: pointer; /* Pointer cursor on hover */
 }
+
 .kanban-card h4 {
     margin: 0 0 8px 0; /* Remove top margin, space below heading  */
     color: #2d3748;
@@ -120,9 +134,9 @@
     left: 0;
     right: 0;
     height: 1.2em;
-    background: linear-gradient(to bottom, 
-        rgba(255,255,255,0) 0%, 
-        rgba(255,255,255,0.9) 100%
+    background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.9) 100%
     );
     opacity: 0; /* Hidden by default */
     transition: opacity 0.2s ease;
@@ -176,8 +190,10 @@
         overflow-x: hidden; /* Hide horizontal overflow */
         overflow-y: auto; /* Enable vertical scrolling */
     }
+
     .kanban-column {
         min-width: 100%; /* Full width for columns */
         margin-bottom: 16px; /* Bottom margin between columns */
     }
+    /*TODO: add responsive view for kanban cards*/
 }

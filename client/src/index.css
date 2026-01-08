@@ -61,6 +61,25 @@ input {
   padding: 8px;
 }
 
+.sign-out-btn {
+  padding: 0.5rem 1rem;  /* Equivalent to px-4 py-2 */
+  font-size: 0.875rem;    /* text-sm */
+  color: white;
+  background-color: #4f46e5;  /* bg-indigo-600 */
+  border-radius: 0.375rem;    /* rounded-md */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+.sign-out-btn:hover {
+  background-color: #4338ca;  /* hover:bg-indigo-700 */
+}
+.sign-out-btn:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);  /* focus ring */
+}
+
 /* --- 4. LAYOUT GRUNDLAGE --- */
 .app-container {
   display: flex;
@@ -91,75 +110,14 @@ input {
   overflow-y: auto;
 }
 
-/* Dashboard-Styles */
-/*.dashboard-container {
-
+/**
+Document container area
+ */
+.ql-container {
+  font-family: inherit;
+  font-size: 1rem;
+  min-height: 200px;
 }
-
-.sidebarLeft {
-
+.ql-editor {
+  min-height: 300px;
 }
-
-.main-content {
-
-}
-
-.footer {
-
-}
-
-/* Kanban Board Styles */
-/*.kanban-container {
-
-}
-
-.user-profile {
-
-}
-
-.user-avatar {
-
-}
-
-.user-info {
-
-}
-
-.user-name {
-
-}
-
-.sign-out {
-
-}
-
-.sign-out:hover {
-
-}
-
-/* Responsive Design Dashboard */
-/*@media (max-width: 768px) {
-  .dashboard-container {
-
-  }
-  
-  .sidebar {
-
-  }
-  
-  .text {
-
-  }
-  
-  .user-profile {
-
-  }
-  
-  .main-content {
-
-  }
-  
-  .top-bar {
-
-  }
-}*/

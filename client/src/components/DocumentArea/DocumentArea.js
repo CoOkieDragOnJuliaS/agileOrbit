@@ -9,6 +9,7 @@ import {useAuth} from '../../contexts/AuthContext';
 import {useLocation, useNavigate} from 'react-router-dom';
 import DocumentEditor from './DocumentEditor';
 import DocumentTree from './DocumentTree';
+import './DocumentArea.css';
 
 
 /**
@@ -71,81 +72,63 @@ export default function DocumentArea() {
     }, [taskId]);
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="flex-shrink-0 flex items-center">
-                                <h1 className="text-xl font-bold text-gray-900">My Documentarea</h1>
-                            </div>
-                        </div>
-                        <div className="flex items-center">
-              <span className="text-sm text-gray-700 mr-4">
-              <DocumentTree
-                  reloadKey={reloadKey}
-                  onSelectDocument={(id) => {
-                      setActiveDocumentId(id);
-                      setShowEditor(true);
-                  }}
-              />
-              </span>
+        <div className="document-container">
+            <div className="document-content">
+                <div className="document-sidebar">
+                    <DocumentTree
+                        reloadKey={reloadKey}
+                        activeDocumentId={activeDocumentId}
+                        onSelectDocument={(id) => {
+                            setActiveDocumentId(id);
+                            setShowEditor(true);
+                        }}
+                    />
+                </div>
+                <div className="document-editor-container">
+                    <header className="document-header">
+                        <h1>Document Editor</h1>
+                        <div className="header-actions">
                             <button
                                 onClick={handleSignOut}
-                                className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none"
+                                className="sign-out-btn"
                             >
                                 Sign Out
                             </button>
+                            <button
+                                onClick={() => {
+                                    setShowEditor(prev => !prev)
+                                    setActiveDocumentId(null)
+                                }}
+                                className="new-document-btn"
+                            >
+                                {showEditor ? "Editor schließen" : "Neues Dokument"}
+                            </button>
                         </div>
-                    </div>
-                </div>
-            </nav>
-
-            <div className="py-10">
-                <main>
-                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        <div className="px-4 py-8 sm:px-0">
-                            <div id="main" className="border-4 border-dashed border-gray-200 rounded-lg h-96 p-4">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Your Kanban Board!</h2>
-                                <p className="text-gray-600">
-                                    This is your personal workspace. Start organizing your tasks here.
-                                </p>
-                                <div id="main" className="p-4">
-                                    <button
-                                        onClick={() => {
-                                            setShowEditor(prev => !prev)
-                                            setActiveDocumentId(null)
-                                        }}
-                                        className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded"
-                                    >
-                                        {showEditor ? "Editor schließen" : "Neues Dokument"}
-                                    </button>
-
-                                    {showEditor && <DocumentEditor documentId={activeDocumentId}
-                                                                   onSaved={() => {
-                                                                       triggerReload();
-                                                                       if (taskId) {
-                                                                           // If we came from TaskModal, go back after saving
-                                                                           navigate(-1);
-                                                                       }
-                                                                   }}
-                                                                   onDeleted={() => {
-                                                                       triggerReload();
-                                                                       setActiveDocumentId(null);
-                                                                       if (!taskId) {
-                                                                           setShowEditor(false);
-                                                                       } else {
-                                                                           navigate(-1);
-                                                                       }
-                                                                   }}/>}
-                                </div>
-
-
-                                {/* Add your Kanban board components here */}
+                    </header>
+                    {showEditor ? (<DocumentEditor
+                            documentId={activeDocumentId}
+                            onSaved={(savedDocumentId) => {
+                                triggerReload();
+                                // Update the active document ID to the newly saved document
+                                setActiveDocumentId(savedDocumentId);
+                                if (taskId) {
+                                    navigate(-1);
+                                }
+                            }}
+                            onDeleted={() => {
+                                triggerReload();
+                                setActiveDocumentId(null);
+                                if (!taskId) {
+                                    setShowEditor(false);
+                                } else {
+                                    navigate(-1);
+                                }
+                            }}/>) :
+                        (<div className="document-placeholder">
+                                <p>Select a document or create a new one to get started</p>
                             </div>
-                        </div>
-                    </div>
-                </main>
+                        )}
+                </div>
             </div>
         </div>
     );
