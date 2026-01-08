@@ -1,0 +1,112 @@
+/* Main header container */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between; /* This pushes children to the edges */
+    align-items: center;
+    padding: 12px 24px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+/* Header title - moved to the left */
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a202c;
+    margin-right: 24px; /* Space between title and action buttons */
+}
+/* Container for header content (buttons, user info, etc.) */
+.header-content {
+    display: flex;
+    align-items: center;
+    flex: 1; /* Take remaining space */
+}
+/* Container for action buttons on the left */
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+/* Container for user info and sign-out on the right */
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto; /* Pushes this container to the right */
+}
+/* User email text */
+.user-email {
+    font-size: 14px;
+    color: #4b5563;
+}
+/* Sign out button */
+.sign-out-btn {
+    padding: 8px 16px;
+    background-color: #6c5ce7;
+    border: none;
+    border-radius: 6px;
+    color: #f0f0f0;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+/* Hover effect for sign out button */
+.sign-out-btn:hover {
+    background-color: #513cf0;
+}
+/* Action button in header */
+.header-actions button {
+    padding: 8px 16px;
+    background-color: #2aaefa;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+/* Hover effect for action button */
+.header-actions button:hover {
+    background-color: #0485cf;
+}
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px;
+    }
+    .header-content {
+        width: 100%;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .user-section {
+        width: 100%;
+        justify-content: space-between;
+        margin-left: 0;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .dashboard-header h1 {
+        font-size: 20px;
+        margin-right: 0;
+        text-align: center;
+    }
+    .sign-out-btn,
+    .header-actions button {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}

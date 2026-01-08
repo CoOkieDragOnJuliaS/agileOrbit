@@ -3,6 +3,7 @@ import {useAuth} from '../../contexts/AuthContext';
 import {useNavigate} from 'react-router-dom';
 import KanbanBoard from "./KanbanBoard";
 import './Dashboard.css';
+import Header from "../../layout/Header";
 
 export default function ClientDashboard() {
     const {currentUser, signOut} = useAuth();
@@ -19,14 +20,9 @@ export default function ClientDashboard() {
 
     return (
         <div className="dashboard-layout">
-            <header className="dashboard-header">
-                <h1>Dashboard</h1>
-                <div className="user-info">
-                    <span className="user-email">{currentUser?.email}</span>
-                    <button onClick={handleSignOut} className="sign-out-btn">Sign Out</button>
-                </div>
-            </header>
-
+            <Header
+                title="Dashboard"
+            />
             {/* Note: No sidebar here anymore! It's provided by the Layout */}
             <div className="dashboard-container">
                 <main className="main-content">

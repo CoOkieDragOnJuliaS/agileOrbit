@@ -10,6 +10,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import DocumentEditor from './DocumentEditor';
 import DocumentTree from './DocumentTree';
 import './DocumentArea.css';
+import Header from "../../layout/Header";
 
 
 /**
@@ -28,33 +29,12 @@ import './DocumentArea.css';
  * } />
  */
 export default function DocumentArea() {
-    /** @type {{ signOut: Function}} Authentication context, does not need currentUser, because authStateListener acts independently */
-    const {signOut} = useAuth();
-
     /** @type {Function} Hook to programmatically navigate */
     const navigate = useNavigate();
 
     const location = useLocation();
     // Check if we have a taskId from the TaskModal
     const taskId = location.state?.taskId;
-
-    /**
-     * Handles the sign out process for the client user.
-     * Signs out the user and redirects to the home page.
-     * @async
-     * @function handleSignOut
-     * @returns {Promise<void>}
-     * @throws {Error} If sign out fails
-     */
-    const handleSignOut = async () => {
-        try {
-            await signOut();
-            navigate('/');
-        } catch (error) {
-            console.error('Failed to sign out:', error);
-            throw error;
-        }
-    };
 
     const [reloadKey, setReloadKey] = useState(0);
     const [activeDocumentId, setActiveDocumentId] = useState(null);
@@ -73,6 +53,16 @@ export default function DocumentArea() {
 
     return (
         <div className="document-container">
+            <Header title="">
+                <button
+                    onClick={() => {
+                        setShowEditor(prev => !prev)
+                        setActiveDocumentId(null)
+                    }}
+                >
+                    {showEditor ? "Editor schließen" : "Neues Dokument"}
+                </button>
+            </Header>
             <div className="document-content">
                 <div className="document-sidebar">
                     <DocumentTree
@@ -87,23 +77,6 @@ export default function DocumentArea() {
                 <div className="document-editor-container">
                     <header className="document-header">
                         <h1>Document Editor</h1>
-                        <div className="header-actions">
-                            <button
-                                onClick={handleSignOut}
-                                className="sign-out-btn"
-                            >
-                                Sign Out
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setShowEditor(prev => !prev)
-                                    setActiveDocumentId(null)
-                                }}
-                                className="new-document-btn"
-                            >
-                                {showEditor ? "Editor schließen" : "Neues Dokument"}
-                            </button>
-                        </div>
                     </header>
                     {showEditor ? (<DocumentEditor
                             documentId={activeDocumentId}
