@@ -1,4 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
+/**
+ * In KanbanBoard.js, useCallback ensures fetchTasks and fetchSubtasks to maintain stable references,
+ * preventing infinite loops in useEffect and unnecessary re-renders.
+ * Dependency-Driven Updates:
+ * The function is recreated only when a value in the dependency array ([deps]) changes.
+ * Empty array [] means the function is created once and never changes. So it stays in memory otherwise!
+ */
 import './KanbanBoard.css';
 import TaskModal from './TaskModal';
 
@@ -46,7 +53,7 @@ function KanbanBoard() {
     const [selectedTask, setSelectedTask] = useState(null); // Currently selected task for editing
 
     //Fetching subtasks for the task count
-    const fetchSubtasks = async (taskIds) => {
+    const fetchSubtasks = useCallback(async (taskIds) => {
         const subtaskPromises = taskIds.map(async (taskId) => {
             try {
                 const response = await fetch(`/api/subtasks/${taskId}`, {
@@ -73,14 +80,14 @@ function KanbanBoard() {
         });
         
         setSubtasks(subtasksByTask);
-    };
+    }, []);
     
     /**
      * Fetches all tasks from the server and updates the component state
      * Is the autmatic refresh tactic after changes are made
      * Handles loading states and errors
      */
-    const fetchTasks = async () => {
+    const fetchTasks = useCallback(async () => {
         try {
             setIsLoading(true);
             console.log('Fetching tasks from:', `${API_BASE_URL}/board`);
@@ -113,10 +120,10 @@ function KanbanBoard() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [fetchSubtasks]);
 
 
-    const refreshTaskSubtasks = async (taskId) => {
+    const refreshTaskSubtasks = useCallback(async (taskId) => {
         const taskSubtasks = await fetch(`/api/subtasks/${taskId}`, {
             credentials: 'include'
         }).then(res => res.ok ? res.json() : []);
@@ -125,7 +132,7 @@ function KanbanBoard() {
             ...prev,
             [taskId]: taskSubtasks
         }));
-    };
+    }, []);
 
     /**
      * Creates a new task with the specified status
@@ -296,7 +303,7 @@ function KanbanBoard() {
         }
         };
         loadTasks();
-    }, []); // This should only run once on mount
+    }, [fetchTasks]); // This should only run once on mount
 
     /**
      * Renders an empty state message for columns with no tasks
