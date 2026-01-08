@@ -35,6 +35,7 @@ function App() {
                 <Route path="/epicArea" element={<EpicArea />} />
                 <Route path="/whiteboard" element={<Whiteboard />} />
                 <Route path="/documentArea" element={<DocumentArea />} />
+                <Route path="/documents/new" element={<DocumentArea />} />
                 <Route path="/settings" element={<div style={{padding: '20px'}}><h2>Settings</h2></div>} />
               </Route>
             </Route>

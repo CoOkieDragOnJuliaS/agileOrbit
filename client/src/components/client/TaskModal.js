@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import './TaskModal.css';
 
 /**
  * TaskModal Component
  * A modal dialog for viewing and editing task details and subtasks.
  * Handles task CRUD operations and subtask management.
- * 
+ *
  * Key Features:
  * - View and edit task details (title, description, status)
  * - Add, edit, delete subtasks
@@ -25,13 +26,16 @@ const API_BASE_URL = '/api/subtasks';
  * @param {Function} props.onSave - Callback when task is saved
  * @param {Function} props.onDelete - Callback when task is deleted
  */
-const TaskModal = ({ task, onClose, onSave, onDelete }) => {
+const TaskModal = ({task, onClose, onSave, onDelete}) => {
     /**
      * State Management:
      * - formData: Tracks the current state of the form fields
      * - isEditing: Tracks whether the form is in edit mode
      * - isSaving: Tracks if a save operation is in progress
      */
+
+    //Initializing navigation to another component with React
+    const navigate = useNavigate();
     /**
      * Effect hook to handle clicks outside the modal content
      * Closes the modal when clicking on the overlay
@@ -58,10 +62,10 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
             description: task?.description || '',
             status: task?.status || 'todo'
         });
-        
+
         const fetchSubtasks = async () => {
             if (!task?.id) return;
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/${task.id}`, {
                     method: 'GET',
@@ -77,12 +81,12 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                     setSubtasks([]);
                     return;
                 }
-                
+
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
                     throw new Error(errorData.message || 'Failed to fetch subtasks');
                 }
-                
+
                 const subtasksData = await response.json();
                 setSubtasks(subtasksData);
             } catch (error) {
@@ -91,7 +95,7 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                 setSubtasks([]);
             }
         };
-        
+
         fetchSubtasks();
     }, [task]);
 
@@ -101,7 +105,7 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
         description: task?.description || '',
         status: task?.status || 'todo' // Default status is 'todo'
     });
-    
+
     // State for managing subtasks
     const [subtasks, setSubtasks] = useState([]); // List of subtasks for the current task
     const [newSubtask, setNewSubtask] = useState(''); // Input field for new subtask title
@@ -114,7 +118,7 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
      * @param {Object} e - The change event from the input field
      */
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -130,7 +134,7 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
         e.preventDefault();
         onSave(formData);
     };
-    
+
     /**
      * Adds a new subtask to the current task
      * @param {Object} e - The click or keydown event
@@ -140,7 +144,7 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
         console.log('Form submitted'); // Check if this logs
 
         if (!newSubtask.trim() || !task?.id) return;
-        
+
         try {
             console.log('Sending request to:', API_BASE_URL);
             const response = await fetch(`${API_BASE_URL}`, {
@@ -164,14 +168,14 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
             if (!response.ok) {
                 throw new Error('Failed to add subtask');
             }
-            
+
             setSubtasks(prev => [...prev, responseData]);
             setNewSubtask('');
         } catch (error) {
             console.error('Error adding subtask:', error);
         }
     };
-    
+
     /**
      * Updates an existing subtask
      * @param {string} subtaskId - ID of the subtask to update
@@ -194,8 +198,8 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
             }
 
             const updatedSubtask = await response.json();
-            setSubtasks(prev => prev.map(st => 
-                st.id === subtaskId ? { ...st, ...updatedSubtask } : st
+            setSubtasks(prev => prev.map(st =>
+                st.id === subtaskId ? {...st, ...updatedSubtask} : st
             ));
             return updatedSubtask;
         } catch (error) {
@@ -226,20 +230,20 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
     const handleDescriptionSave = async (e, subtaskId) => {
         e.stopPropagation();
         try {
-            await handleUpdateSubtask(subtaskId, { description: editingDescription });
+            await handleUpdateSubtask(subtaskId, {description: editingDescription});
             setEditingSubtaskId(null);
         } catch (error) {
             console.error('Error saving description:', error);
         }
     };
-    
+
     /**
      * Deletes a subtask
      * @param {string} subtaskId - ID of the subtask to delete
      */
     const handleDeleteSubtask = async (subtaskId) => {
         if (!window.confirm('Are you sure you want to delete this subtask?')) return;
-        
+
         try {
             const response = await fetch(`${API_BASE_URL}/${subtaskId}`, {
                 method: 'DELETE',
@@ -248,24 +252,24 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                     'Content-Type': 'application/json',
                 },
             });
-            
+
             if (!response.ok) {
                 throw new Error('Failed to delete subtask');
             }
-            
+
             setSubtasks(subtasks.filter(st => st.id !== subtaskId));
         } catch (error) {
             console.error('Error deleting subtask:', error);
         }
     };
-    
+
     /**
      * Toggles the completion status of a subtask
      * @param {Object} subtask - The subtask to update
      */
     const toggleSubtaskStatus = (subtask) => {
         const newStatus = subtask.status === 'completed' ? 'todo' : 'completed';
-        handleUpdateSubtask(subtask.id, { status: newStatus });
+        handleUpdateSubtask(subtask.id, {status: newStatus});
     };
 
     if (!task) return null;
@@ -274,6 +278,13 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <button className="close-btn" onClick={onClose}>×</button>
+                <button className="createDocument-btn" onClick={
+                    () => {
+                        navigate('/documents/new', {
+                            state: {taskId: task.id}
+                        });
+                    }
+                }>&#xf15c;</button>
                 <h2>Edit Task</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -297,8 +308,8 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                     </div>
                     <div className="form-group">
                         <label>Status</label>
-                        <select 
-                            name="status" 
+                        <select
+                            name="status"
                             value={formData.status}
                             onChange={handleChange}
                         >
@@ -308,7 +319,7 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                             <option value="done">Done</option>
                         </select>
                     </div>
-                    
+
                     <div className="form-group">
                         <label>Subtasks</label>
                         <div className="subtasks-list">
@@ -322,10 +333,11 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                                                 onChange={() => toggleSubtaskStatus(subtask)}
                                                 onClick={(e) => e.stopPropagation()}
                                             />
-                                            <span className={`subtask-title ${subtask.status === 'completed' ? 'completed' : ''}`}>
+                                            <span
+                                                className={`subtask-title ${subtask.status === 'completed' ? 'completed' : ''}`}>
                                                 {subtask.title}
                                             </span>
-                                            <button 
+                                            <button
                                                 className="btn btn-sm btn-link text-danger ms-auto p-0"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -346,13 +358,13 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                                                     placeholder="Add a description..."
                                                 />
                                                 <div className="mt-2">
-                                                    <button 
+                                                    <button
                                                         className="btn btn-sm btn-primary me-2"
                                                         onClick={(e) => handleDescriptionSave(e, subtask.id)}
                                                     >
                                                         Save
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         className="btn btn-sm btn-secondary"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
@@ -384,10 +396,10 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                                     placeholder="Add a subtask..."
                                     className="subtask-input"
                                 />
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     className="btn btn-primary btn-sm"
-                                     onClick={(e) => {
+                                    onClick={(e) => {
                                         e.preventDefault();
                                         handleAddSubtask(e);
                                     }}
@@ -398,11 +410,11 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="modal-actions">
-                        <button 
-                            type="button" 
-                            className="btn btn-delete" 
+                        <button
+                            type="button"
+                            className="btn btn-delete"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onDelete();
@@ -411,9 +423,9 @@ const TaskModal = ({ task, onClose, onSave, onDelete }) => {
                             Delete Task
                         </button>
                         <div>
-                            <button 
-                                type="button" 
-                                className="btn btn-secondary" 
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
                                 onClick={onClose}
                             >
                                 Cancel
