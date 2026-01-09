@@ -64,6 +64,7 @@
     overflow-x: hidden; /* Prevent horizontal scrolling */
     padding-right: 4px;
     min-height: 100px; /* Ensure columns have a minimum height */
+    padding-top: 2px; /* Spacing on top to fix disappearing border */
 }
 
 /* Custom scrollbar styling for Webkit browsers, information from the web */

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 /**
  * In KanbanBoard.js, useCallback ensures fetchTasks and fetchSubtasks to maintain stable references,
  * preventing infinite loops in useEffect and unnecessary re-renders.
@@ -51,6 +51,7 @@ function KanbanBoard() {
     const [error, setError] = useState(null);          // Error state for API errors
     const [subtasks, setSubtasks] = useState({});
     const [selectedTask, setSelectedTask] = useState(null); // Currently selected task for editing
+    const draggedTask = useRef(null); // Task being dragged for Drag&Drop
 
     //Fetching subtasks for the task count
     const fetchSubtasks = useCallback(async (taskIds) => {
@@ -192,8 +193,6 @@ function KanbanBoard() {
                 throw new Error('Failed to update task');
             }
 
-            // Refresh the task list
-            await fetchTasks();
         } catch (err) {
             console.error('Error updating task:', err);
             setError('Failed to update task. Please try again.');
@@ -244,6 +243,7 @@ function KanbanBoard() {
         
         try {
             await updateTask(selectedTask.id, updatedData);
+            await fetchTasks();  // Refresh the task list
             await refreshTaskSubtasks(selectedTask.id);
             setSelectedTask(null);
         } catch (err) {
@@ -352,6 +352,10 @@ function KanbanBoard() {
                 key={task.id} 
                 className="kanban-card"
                 onClick={() => handleTaskClick(task)}
+                draggable
+                onDragStart={() => {
+                    draggedTask.current = task;
+                }}
             >
                 <h4>{task.title}</h4>
                 <p className="description">{task.description || 'No description'}</p>
@@ -391,7 +395,27 @@ function KanbanBoard() {
                 </button>
             </div>
 
-            <div className="kanban-cards">
+            <div
+                className="kanban-cards"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                    e.preventDefault();
+                    const task = draggedTask.current;
+                    if (!task || task.status === column) return;
+
+                    // Update UI Instantly
+                    setTasks(prev => ({
+                        ...prev,
+                        [task.status]: prev[task.status].filter(t => t.id !== task.id),
+                        [column]: [{ ...task, status: column }, ...prev[column]]
+                    }));
+
+                    // Save changes in background
+                    updateTask(task.id, { status: column });
+
+                    draggedTask.current = null;
+                }}
+            >
                 {isLoading ? (
                     <div className="loading-state">Loading tasks...</div>
                 ) : error ? (
