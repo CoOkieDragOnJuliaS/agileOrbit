@@ -109,6 +109,28 @@ router.get("/fileTree", async (req, res) => {
     }
 });
 
+router.get("/fileTree/:id", async (req, res) => {
+    try {
+        const taskId = String(req.params.id);
+        const snapshot = await admin
+            .firestore()
+            .collection("documents")
+            .where("taskId", "==", taskId)
+            .get();
+
+        const documents = snapshot.docs.map(doc => ({
+            id: doc.id,
+            title: doc.title,
+            ...doc.data()
+        }));
+
+        res.json(documents);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({error: "Failed to fetch documents" });
+    }
+});
+
 router.get("/:id", async (req, res) => {
     try {
         const doc = await admin

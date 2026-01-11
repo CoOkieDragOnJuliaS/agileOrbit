@@ -97,6 +97,41 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         };
 
         fetchSubtasks();
+
+        const fetchDocuments = async () => {
+            if (!task?.id) return;
+    
+            try {
+                const response = await fetch(`/api/documents/fileTree/${task.id}`, {
+                    method: 'GET',
+                    credentials: 'include', // Include cookies for authentication
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+    
+                //handle if there are no subtasks yet, set empty array
+                if (response.status === 404) {
+                    //No subtasks found
+                    setDocuments([]);
+                    return;
+                }
+    
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to fetch documents');
+                }
+    
+                const DocumentData = await response.json();
+                setDocuments(DocumentData);
+            } catch (error) {
+                console.error('Error fetching subtasks:', error);
+                //Setting empty array to prevent frontend issues
+                setDocuments([]);
+            }
+        };
+
+        fetchDocuments();
     }, [task]);
 
     // Form state for task details
@@ -111,7 +146,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
     const [newSubtask, setNewSubtask] = useState(''); // Input field for new subtask title
     const [editingSubtaskId, setEditingSubtaskId] = useState(null); // ID of subtask being edited
     const [editingDescription, setEditingDescription] = useState(''); // Current description being edited
-
+    const [documents, setDocuments] = useState([]); // List of Documents to this task
     /**
      * Handles changes to form inputs
      * Updates the formData state with new values
@@ -263,6 +298,15 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         }
     };
 
+    
+
+    const handleNavigateDocument = (docId) => {
+
+        navigate(`/documents/edit/${docId}`, { state: { taskId: task.id } });
+
+    };
+
+
     /**
      * Toggles the completion status of a subtask
      * @param {Object} subtask - The subtask to update
@@ -325,7 +369,28 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                             <option value="done">Done</option>
                         </select>
                     </div>
+                    
+                    <div className="form-group">
+  <label>Documents</label>
+  <div className="documents-list">
+    <ul>
+      {documents.map((doc) => (
+        <li key={doc.id} className="document-item">
+          <button
+            className="btn btn-link document-title" // optional Styling
+            onClick={() => handleNavigateDocument(doc.id)}
+            style={{ padding: 0, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            {doc.title || "Untitled Document"}
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
 
+
+                    
                     <div className="form-group">
                         <label>Subtasks</label>
                         <div className="subtasks-list">

@@ -6,18 +6,41 @@ import './DocumentArea.css';
 
 //import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 //import { db } from '../../firebase';
+import { useNavigate } from "react-router-dom";
+
 
 
 export default function DocumentEditor({documentId, onSaved, onDeleted}) {
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState('');
     const [title, setTitle] = useState('');
+    const [taskId, setTaskId] = useState('');
     const location = useLocation();
-    const taskId = location.state?.taskId;
+    
+    //let taskId = location.state?.taskId;
+    
+    //const taskId = useLocation();
+    const navigate = useNavigate();
+
+    const navigateTask = (taskId) => {
+        navigate("/kanban", {
+            state: { taskId }
+          });
+    
+    }
+
+
+
+    useEffect(() => {
+        if (location.state?.taskId) {
+          setTaskId(location.state.taskId);
+        }
+      }, [location.state?.taskId]);
 
     const saveDocument = useCallback(async (content, docId, title) => {
         //console.log("content:", content);
         try {
+            
             const response = await fetch("/api/documents/saveDocument", {
                 method: "POST",
                 headers: {
@@ -74,6 +97,7 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
                 const data = await loadDocument(documentId);
                 setTitle(data.title || "");
                 setContent(data.content || "");
+                setTaskId(data.taskId || "");
             } catch (err) {
                 console.error(err);
             } finally {
@@ -127,6 +151,15 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
                     >
                         Delete
                     </button>
+                )}
+                {taskId && (
+                    <button
+                    onClick={() => navigateTask(taskId)}
+                    type="button"
+                    className="btn-delete"
+                >
+                    Go to Task
+                </button>
                 )}
             </div>
 

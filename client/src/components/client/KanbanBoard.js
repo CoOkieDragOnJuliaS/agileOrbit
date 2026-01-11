@@ -8,6 +8,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
  */
 import './KanbanBoard.css';
 import TaskModal from './TaskModal';
+import { useLocation } from "react-router-dom";
+
+
+
 
 // Base URL for the task API endpoints - using relative URL to work with proxy
 const API_BASE_URL = '/api/task';
@@ -428,6 +432,21 @@ function KanbanBoard() {
             </div>
         </div>
     );
+
+
+    const location = useLocation();
+
+    useEffect(() => {
+    const taskIdFromRoute = location.state?.taskId;
+    if (!taskIdFromRoute) return;
+
+    const allTasks = Object.values(tasks).flat();
+    const task = allTasks.find(t => t.id === taskIdFromRoute);
+
+    if (task) {
+        setSelectedTask(task);
+    }
+    }, [location.state?.taskId, tasks]);
 
     return (
         <>

@@ -11,6 +11,7 @@ import DocumentEditor from './DocumentEditor';
 import DocumentTree from './DocumentTree';
 import './DocumentArea.css';
 import Header from "../../layout/Header";
+import { useParams } from 'react-router-dom';
 
 
 /**
@@ -45,11 +46,15 @@ export default function DocumentArea() {
 
     const [showEditor, setShowEditor] = useState(false);
 
-    useEffect(() => {
-        if (taskId) {
-            setShowEditor(true);
-        }
-    }, [taskId]);
+
+    const { docId } = useParams();
+
+useEffect(() => {
+    if (docId) {
+        setActiveDocumentId(docId);
+        setShowEditor(true);
+    }
+}, [docId]);
 
     return (
         <div className="document-container">

@@ -4,7 +4,7 @@
  * @description Main DocumentArea component for regular users, providing access to the Documentview.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import EpicEditor from './EpicEditor';
@@ -51,7 +51,9 @@ export default function EpicArea() {
       throw error;
     }
   };
-
+  
+ 
+  
 
   const [reloadKey, setReloadKey] = useState(0);
   const [activeEpicId, setActiveEpicId] = useState(null);
