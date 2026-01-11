@@ -56,6 +56,12 @@ useEffect(() => {
     }
 }, [docId]);
 
+useEffect(() => {
+    if (taskId) {
+        setShowEditor(true);
+    }
+}, [taskId]);
+
     return (
         <div className="document-container">
             <Header title="">
