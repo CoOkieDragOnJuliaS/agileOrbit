@@ -14,7 +14,6 @@ import ClientDashboard from './components/client/Dashboard';
 import DocumentArea from './components/DocumentArea/DocumentArea';
 import Whiteboard from './components/Whiteboard/Whiteboard';
 import EpicArea from './components/Epics/EpicArea';
-import KanbanBoard from './components/client/KanbanBoard';
 
 
 import './App.css'; 
@@ -38,7 +37,6 @@ function App() {
                 <Route path="/whiteboard" element={<Whiteboard />} />
                 <Route path="/documentArea" element={<DocumentArea />} />
                 <Route path="/documents/new" element={<DocumentArea />} />
-                <Route path="/kanban" element={<KanbanBoard />} />
                 <Route path="/settings" element={<div style={{padding: '20px'}}><h2>Settings</h2></div>} />
                 <Route path="/documents/edit/:docId" element={<DocumentArea />} />
 

@@ -23,7 +23,7 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
     const navigate = useNavigate();
 
     const navigateTask = (taskId) => {
-        navigate("/kanban", {
+        navigate("/dashboard", {
             state: { taskId }
           });
     
