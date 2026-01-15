@@ -60,8 +60,11 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         setFormData({
             title: task?.title || '',
             description: task?.description || '',
-            status: task?.status || 'todo'
+            status: task?.status || 'todo',
+            epicId: task?.epicId || ''
         });
+
+       
 
         const fetchSubtasks = async () => {
             if (!task?.id) return;
@@ -131,14 +134,50 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
             }
         };
 
+        const fetchEpics = async () => {
+            if (!task?.id) return;
+    
+            try {
+                const response = await fetch(`/api/epics/fileTree/`, {
+                    method: 'GET',
+                    credentials: 'include', // Include cookies for authentication
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+    
+                //handle if there are no subtasks yet, set empty array
+                if (response.status === 404) {
+                    //No subtasks found
+                    setEpics([]);
+                    return;
+                }
+    
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to fetch documents');
+                }
+    
+                const DocumentData = await response.json();
+                setEpics(DocumentData);
+            } catch (error) {
+                console.error('Error fetching subtasks:', error);
+                //Setting empty array to prevent frontend issues
+                setEpics([]);
+            }
+        };
+
+        fetchEpics();
         fetchDocuments();
     }, [task]);
+    
 
     // Form state for task details
     const [formData, setFormData] = useState({
         title: task?.title || '',
         description: task?.description || '',
-        status: task?.status || 'todo' // Default status is 'todo'
+        status: task?.status || 'todo', // Default status is 'todo'
+        epicId: task?.epicId || []
     });
 
     // State for managing subtasks
@@ -147,6 +186,8 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
     const [editingSubtaskId, setEditingSubtaskId] = useState(null); // ID of subtask being edited
     const [editingDescription, setEditingDescription] = useState(''); // Current description being edited
     const [documents, setDocuments] = useState([]); // List of Documents to this task
+    const [epics, setEpics] = useState([]);// List of Epics to this task
+
     /**
      * Handles changes to form inputs
      * Updates the formData state with new values
@@ -347,6 +388,24 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                             required
                         />
                     </div>
+                    <div className="form-group">
+                    <label for="epicId">Epic Category</label>
+
+                    <select 
+                    name="epicId" 
+                    id="epicId"
+                    value={formData.epicId}
+                    onChange={handleChange}
+                    >
+  <option value="">Bitte Epic auswählen</option>
+
+  {epics.map((epic) => (
+    <option key={epic.id} value={epic.id}>
+      {epic.title}
+    </option>
+  ))}
+</select>
+</div>
                     <div className="form-group">
                         <label>Description</label>
                         <textarea
