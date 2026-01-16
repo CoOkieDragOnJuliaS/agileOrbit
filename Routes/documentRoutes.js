@@ -89,23 +89,73 @@ router.delete("/deleteDocument", async (req, res) => {
 
 router.get("/fileTree", async (req, res) => {
     try {
-        const snapshot = await admin
-            .firestore()
-            .collection("documents")
-            //.where("ownerId", "==", req.user.uid)
-            .orderBy("updatedAt", "desc")
-            .get();
-
-        const documents = snapshot.docs.map(doc => ({
+        // Fetch all necessary data in parallel
+        const [docsSnapshot, tasksSnapshot, epicsSnapshot] = await Promise.all([
+            admin.firestore().collection("documents")
+                // .where("ownerId", "==", req.user.uid)  // Uncomment when auth is implemented
+                .orderBy("updatedAt", "desc")
+                .get(),
+            admin.firestore().collection("tasks").get(),
+            admin.firestore().collection("epics").get()
+        ]);
+        // Process documents
+        const documents = docsSnapshot.docs.map(doc => ({
             id: doc.id,
-            title: doc.title,
             ...doc.data()
         }));
+        // Process tasks
+        const tasks = tasksSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        // Process epics
+        const epics = epicsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        // Organize tasks by epic
+        const tasksByEpic = {};
+        tasks.forEach(task => {
+            const epicId = task.epicId || 'no-epic';
+            if (!tasksByEpic[epicId]) {
+                tasksByEpic[epicId] = [];
+            }
+            tasksByEpic[epicId].push(task);
+        });
+        // Organize documents by task
+        const documentsByTask = {};
+        documents.forEach(doc => {
+            const taskId = doc.taskId || 'no-task';
+            if (!documentsByTask[taskId]) {
+                documentsByTask[taskId] = [];
+            }
+            documentsByTask[taskId].push(doc);
+        });
+        // Build the hierarchical structure
+        const result = {
+            epics: [],
+            tasksWithoutEpic: tasksByEpic['no-epic']?.map(task => ({
+                ...task,
+                documents: documentsByTask[task.id] || []
+            })) || [],
+            standaloneDocuments: documentsByTask['no-task'] || []
+        };
+        // Add epics with their tasks and documents
+        epics.forEach(epic => {
+            const epicTasks = (tasksByEpic[epic.id] || []).map(task => ({
+                ...task,
+                documents: documentsByTask[task.id] || []
+            }));
 
-        res.json(documents);
+            result.epics.push({
+                ...epic,
+                tasks: epicTasks
+            });
+        });
+        res.json(result);
     } catch (err) {
         console.error(err);
-        res.status(500).json({error: "Failed to fetch documents"});
+        res.status(500).json({error: "Failed to fetch file tree"});
     }
 });
 
@@ -127,7 +177,7 @@ router.get("/fileTree/:id", async (req, res) => {
         res.json(documents);
     } catch (err) {
         console.error(err);
-        res.status(500).json({error: "Failed to fetch documents" });
+        res.status(500).json({error: "Failed to fetch documents"});
     }
 });
 

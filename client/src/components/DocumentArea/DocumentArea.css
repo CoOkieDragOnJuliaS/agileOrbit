@@ -2,89 +2,192 @@
 .document-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;  /* 100% of viewport height */
+    height: 100vh; /* 100% of viewport height */
     background-color: #f9fafb;
 }
+
 /* Header styles */
 .document-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 24px;  /* 0.75rem 1.5rem */
+    padding: 12px 24px; /* 0.75rem 1.5rem */
     background-color: white;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     z-index: 10;
     position: sticky;
     top: 0;
 }
+
 .document-header h1 {
     margin: 0;
-    font-size: 24px;  /* 1.5rem */
+    font-size: 24px; /* 1.5rem */
     font-weight: 600;
     color: #1a202c;
 }
+
 /* Container for header action buttons */
 .header-actions {
     display: flex;
-    gap: 16px;  /* 1rem */
+    gap: 16px; /* 1rem */
     align-items: center;
 }
+
 /* Sidebar styles */
 .document-sidebar {
-    padding: 10px;  /* 0.625rem */
-    width: 280px;  /* 17.5rem */
+    padding: 10px; /* 0.625rem */
+    width: 280px; /* 17.5rem */
     border-right: 1px solid #e2e8f0;
     overflow-y: auto;
 }
-/* Remove default list styling */
-.document-sidebar ul {
+
+/* Document tree */
+.document-tree {
+    padding: 8px 0;
+    overflow-y: auto;
+    height: 100%;
+    list-style: none;
+    padding-left: 0;
+}
+/* Section Headers */
+.document-tree h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4f46e5;
+    padding: 8px 16px 8px 24px;
+    margin: 8px 0 4px;
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+}
+/* Epic Items */
+.epic-item {
+    margin: 8px 0;
+    position: relative;
+    padding-left: 20px;
+}
+.epic-item::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #6b46c1;
+    font-size: 1.5em;
+    line-height: 1;
+    top: 4px;
+}
+.epic-item > h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a202c;
+    padding: 6px 12px 6px 24px;
+    margin: 4px 0;
+    background-color: #f8fafc;
+    border-radius: 4px;
+    position: relative;
+    cursor: default;
+}
+/* Task Items */
+.task-item {
+    margin: 4px 0 4px 24px;
+    position: relative;
+    padding-left: 24px;
+}
+.task-item::before {
+    content: "↳";
+    position: absolute;
+    left: 0;
+    color: #718096;
+    font-size: 1.2em;
+}
+.task-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2d3748;
+    padding: 4px 8px;
+    margin: 2px 0;
+    cursor: default;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    display: block;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+/* Document List */
+.document-list {
+    margin: 4px 0 4px 48px;
+    padding: 0;
+    list-style: none;
+    position: relative;
+}
+.document-list::before {
+    content: "";
+    position: absolute;
+    left: -24px;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+}
+.document-item {
+    padding: 4px 8px 4px 24px;
+    margin: 2px 0;
+    font-size: 0.875rem;
+    color: #4a5568;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    position: relative;
+    list-style-type: none;
+}
+.document-item::before {
+    content: "📄";
+    position: absolute;
+    left: 6px;
+    color: #718096;
+    font-size: 0.9em;
+    transition: transform 0.2s;
+}
+.document-item:hover {
+    background-color: #f1f5f9;
+    color: #4f46e5;
+}
+.document-item:hover::before {
+    transform: translateX(2px);
+}
+.document-item.active {
+    background-color: #e0e7ff;
+    color: #4f46e5;
+    font-weight: 500;
+}
+/* Active state for tasks */
+.task-item.active .task-title {
+    background-color: #e0e7ff;
+    color: #4f46e5;
+    font-weight: 500;
+}
+/* Nested Lists */
+.task-list {
     margin: 0;
     padding: 0;
     list-style: none;
 }
-/* Space between list items */
-.document-sidebar li {
-    margin-bottom: 4px;  /* 0.25rem */
-}
-/* Sidebar button styles */
-.document-sidebar button {
-    width: 100%;
-    padding: 4px 8px;  /* 0.25rem 0.5rem */
-    text-align: left;
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border-radius: 4px;  /* 0.25rem */
-    color: #4f46e5;
-    font-size: 14px;  /* 0.875rem */
-}
-/* Hover effect for sidebar buttons */
-.document-sidebar button:hover {
-    background-color: #f3f4f6;
-}
-/* Active state for selected document */
-.document-sidebar button.active {
-    background-color: #e0e7ff;
-    color: #1e1b4b;
-    font-weight: 600;
-    border: 2px solid #4f46e5;
-}
+
 /* Main content area */
 .document-content {
     flex: 1;
     display: flex;
     overflow: hidden;
-    padding: 16px;  /* 1rem */
-    gap: 16px;  /* 1rem */
+    padding: 16px; /* 1rem */
+    gap: 16px; /* 1rem */
 }
+
 /* Editor container */
 .document-editor-container {
     flex: 1;
-    padding: 24px;  /* 1.5rem */
+    padding: 24px; /* 1.5rem */
     overflow-y: auto;
     background-color: #f9f9f9;
 }
+
 /* Placeholder for empty state */
 .document-placeholder {
     display: flex;
@@ -92,75 +195,107 @@
     justify-content: center;
     height: 100%;
     color: #718096;
-    font-size: 18px;  /* 1.125rem */
+    font-size: 18px; /* 1.125rem */
 }
+
 /* Editor styles */
 .editor-container {
     background: white;
-    border-radius: 8px;  /* 0.5rem */
+    border-radius: 8px; /* 0.5rem */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     height: 100%;
     display: flex;
     flex-direction: column;
 }
+
 /* Editor header section */
 .editor-header {
-    padding: 16px 24px;  /* 1rem 1.5rem */
+    padding: 16px 24px; /* 1rem 1.5rem */
     border-bottom: 1px solid #e2e8f0;
 }
+
 /* Title input field */
 .title-input {
     width: 100%;
-    font-size: 24px;  /* 1.5rem */
+    font-size: 24px; /* 1.5rem */
     font-weight: 600;
     border: none;
     outline: none;
-    padding: 8px 0;  /* 0.5rem 0 */
+    padding: 8px 0; /* 0.5rem 0 */
 }
+
 /* Placeholder text color */
 .title-input::placeholder {
     color: #a0aec0;
 }
+
 /* Editor content area */
 .editor-content {
     flex: 1;
     overflow-y: auto;
-    padding: 24px;  /* 1.5rem */
+    padding: 24px; /* 1.5rem */
 }
+
 /* Action buttons container */
 .editor-actions {
-    padding: 16px 24px;  /* 1rem 1.5rem */
+    padding: 16px 24px; /* 1rem 1.5rem */
     border-top: 1px solid #e2e8f0;
     display: flex;
     justify-content: flex-end;
-    gap: 12px;  /* 0.75rem */
+    gap: 12px; /* 0.75rem */
 }
+
 /* Responsive design for mobile */
 @media (max-width: 768px) {
     .document-container {
         flex-direction: column;
     }
+
     .document-content {
         flex-direction: column;
-        padding: 12px;  /* 0.75rem */
+        padding: 12px; /* 0.75rem */
     }
+
     .document-sidebar {
         width: 100%;
-        height: 40vh;  /* 40% of viewport height */
+        height: 40vh; /* 40% of viewport height */
         border-right: none;
         border-bottom: 1px solid #e2e8f0;
     }
+
     .document-header {
-        padding: 8px 16px;  /* 0.5rem 1rem */
+        padding: 8px 16px; /* 0.5rem 1rem */
     }
+
     .document-header h1 {
-        font-size: 20px;  /* 1.25rem */
+        font-size: 20px; /* 1.25rem */
     }
+
     .header-actions {
-        gap: 8px;  /* 0.5rem */
+        gap: 8px; /* 0.5rem */
     }
-    .close-editor-btn{
-        padding: 6px 12px;  /* 0.375rem 0.75rem */
-        font-size: 13px;  /* 0.8125rem */
+
+    .close-editor-btn {
+        padding: 6px 12px; /* 0.375rem 0.75rem */
+        font-size: 13px; /* 0.8125rem */
+    }
+
+    .document-tree {
+        padding: 4px;
+    }
+
+    .document-tree h3 {
+        padding: 6px 8px;
+        font-size: 0.95rem;
+    }
+
+    .task-title,
+    .document-item {
+        padding-left: 20px;
+        font-size: 0.85rem;
+    }
+
+    .document-list {
+        margin-left: 12px;
     }
 }
