@@ -13,8 +13,8 @@ FH Project for SoftwareEngineering - AgileOrbit is a tool to help developers kee
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/agileorbit.git
-   cd agileorbit
+    - git clone https://github.com/CoOkieDragOnJuliaS/agileOrbit
+    - cd agileorbit
    ```
 
 ## 🔧 Backend Setup
@@ -24,28 +24,13 @@ In root folder:
    npm install
    ```
 
-2. Create a `.env` file in the root directory with:
-   ```env
-   PORT=5000
-   HOST=localhost
-   HOST_URL=http://localhost:5000
-   API_KEY=your-api-key
-   AUTH_DOMAIN=your-auth-domain
-   PROJECT_ID=project-id
-   ADMIN_EMAIL=your-service-account-email@project.iam.gserviceaccount.com
-   DATABASE_URL=project-url
-   STORAGE_BUCKET=your-storage-bucket
-   MESSAGING_SENDER_ID=your-messaging-sender-id
-   APP_ID=your-app-id
-   MEASUREMENT_ID=your-measurement-id
+2. Copy/Paste the .env_backend file
+   ```bash
+   - Unzip the file "setup" and copy the .env_backend directly into the root folder \agileOrbit
+   - Rename the file to .env
    ```
-The data is located here (in the settings menu of the firebase project overview):
-- ![Settings of the WebApp from Firebase, information about the environment variables are located there.](assets/image.png)
 
-- The ADMIN-email is located in the Admin Settings --> see Firebase Admin SDK Setup below
-
-
-4. Start the backend server:
+3. Start the backend server:
    ```bash
    npm run dev
    ```
@@ -62,16 +47,11 @@ The data is located here (in the settings menu of the firebase project overview)
    npm install
    ```
 
-3. Create a `.env` file in the client directory:
-   ```env
-   REACT_APP_FIREBASE_API_KEY=your-api-key
-   REACT_APP_FIREBASE_AUTH_DOMAIN=agile-orbit-d6365.firebaseapp.com
-   REACT_APP_FIREBASE_PROJECT_ID=agile-orbit-d6365
-   REACT_APP_FIREBASE_STORAGE_BUCKET=agile-orbit-d6365.appspot.com
-   REACT_APP_FIREBASE_MESSAGING_SENDER_ID=539662100374
-   REACT_APP_FIREBASE_APP_ID=1:539662100374:web:e685e1504f103a824c5fb7
-   REACT_APP_FIREBASE_MEASUREMENT_ID=G-XYB10Z21VS
-   REACT_APP_API_URL=http://localhost:3001
+3. Install dependencies:
+   ```bash
+   - If you have not unzipped the folder "setup", unzip the folder
+   - Copy/Paste the .env_frontend file into the \agileOrbit\client subfolder
+   - Rename the file to .env 
    ```
 
 4. Start the development server (inside the root directory):
@@ -80,20 +60,8 @@ The data is located here (in the settings menu of the firebase project overview)
    ```
 
 ## 🔑 Firebase Admin SDK Setup (One-time)
-
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Select your project
-3. Click the gear icon ⚙️ > Project settings
-4. Go to "Service accounts" tab
-5. Click "Generate new private key"
-6. Save the JSON file securely with the new name: serviceAccountKey.json
-7. Copy the private key and client email to your local root's `.env` file
-
-- Information about the "Dienstkonto", the admin:
-- ![Setting of the WebApp from Firebase and then serviceaccount / Dienstkonto](assets/image-1.png)
-- ![generating a new private key](assets/image-2.png) (Generate a new key, save it and copy it into the root folder of your local project - with the name: )
-
-## 🛠 Available Scripts
+- If you have not unzipped the folder "setup", unzip the folder
+- Copy/Paste the file serviceAccountKey.json into the root folder \agileOrbit
 
 ### Frontend (from /client)
 - `npm start` - Start development server
