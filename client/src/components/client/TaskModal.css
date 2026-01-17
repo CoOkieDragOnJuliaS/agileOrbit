@@ -374,3 +374,68 @@ input[type="checkbox"] {
         justify-content: flex-end;
     }
 }
+
+/* Container that looks like a text input but holds chips */
+.tags-container {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Area holding the actual chips */
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* The individual tag bubble */
+.tag-chip {
+    background-color: #f0f0f0; /* Matches your btn-secondary */
+    color: #333;
+    padding: 4px 10px;
+    border-radius: 16px; /* Pill shape */
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+/* The little 'x' to remove a tag */
+.tag-remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+
+.tag-remove-btn:hover {
+    color: #ff6b6b; /* Matches your btn-delete */
+}
+
+/* Override standard input styles for the tag input to make it blend in */
+/* We use specific specificity to overwrite the global input[type="text"] style */
+.tags-container input[type="text"].tag-input {
+    border: none;
+    padding: 4px 0;
+    margin: 0;
+    box-shadow: none;
+    background: transparent;
+    width: 100%;
+}
+
+.tags-container input[type="text"].tag-input:focus {
+    outline: none;
+    box-shadow: none;
+}
