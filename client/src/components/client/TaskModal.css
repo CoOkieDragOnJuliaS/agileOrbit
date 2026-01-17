@@ -1,441 +1,548 @@
-/* 
- * TaskModal.css
- * Styles for the TaskModal component and its children
- * 
- * Structure:
- * 1. Modal overlay and container
- * 2. Form elements and inputs
- * 3. Subtasks list and items
- * 4. Buttons and interactive elements
- * 5. Responsive design
+/* * TaskModal.css - Jira Inspired Theme
  */
 
-/* ===== 1. Modal Overlay and Container ===== */
-/* Background overlay that covers the entire viewport */
+/* ===== Variables & Reset ===== */
+:root {
+    --jira-bg: #ffffff;
+    --jira-bg-hover: #ebecf0;
+    --jira-border: #dfe1e6;
+    --jira-text-main: #172b4d;
+    --jira-text-secondary: #5e6c84;
+    --jira-blue: #0052cc;
+    --jira-blue-hover: #0065ff;
+    --jira-red: #de350b;
+    --jira-red-bg: #ffebe6;
+    --jira-red-hover: #ffbdad;
+    --modal-width: 900px;
+    
+    /* Modern System Font Stack */
+    --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Fix for input/select font inheritance */
+body, input, select, textarea, button {
+    font-family: var(--font-stack);
+}
+
+/* ===== Overlay & Content Structure ===== */
 .modal-overlay {
-    position: fixed; /* Fixed positioning relative to viewport */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    display: flex; /* Enables flexbox layout */
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    z-index: 1000; /* Ensures modal appears above other content */
-    padding: 20px; /* Spacing around the modal */
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(9, 30, 66, 0.54);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 40px 20px;
 }
 
-/* Main container for the modal dialog */
-.modal-content {
-    background: white;
-    padding: 30px; /* Inner spacing */
-    position: relative; /* For positioning child elements */
-    border-radius: 8px; /* Rounded corners */
-    width: 100%; /* Full width of parent */
-    max-width: 600px; /* Maximum width */
-    max-height: 90vh; /* Maximum height relative to viewport */
-    overflow-y: auto; /* Enables vertical scrolling if content overflows */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    position: relative;
+.modal-content.jira-layout {
+    background: var(--jira-bg);
+    width: 100%;
+    max-width: var(--modal-width);
+    height: 90vh;
+    max-height: 900px;
+    
+    /* CHANGE: Increased from 3px to 16px for a modern round look */
+    border-radius: 16px; 
+    
+    box-shadow: 0 8px 16px -4px rgba(9, 30, 66, 0.25), 0 0 0 1px rgba(9, 30, 66, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Important: keeps content inside the rounded corners */
 }
 
-/* Header section */
+/* ===== Header ===== */
 .modal-header {
+    padding: 20px 30px 10px 30px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    position: relative;
-    padding-right: 40px; /* Space for the close button */
+    align-items: flex-start;
+    flex-shrink: 0;
 }
 
-.modal-header h2 {
-    margin: 0;
-    flex-grow: 1; /* take available space with flex-grow */
+.breadcrumbs span {
+    color: var(--jira-text-secondary);
+    font-size: 13px;
+    font-weight: 500;
 }
 
-/* ===== 2. Typography ===== */
-/* Main heading */
-h2 {
-    margin-top: 0; /* Removes default top margin */
-    margin-bottom: 20px; /* Spacing below heading */
-    color: #333;
-}
-
-/* ===== 3. Form Elements ===== */
-/* Group of related form controls */
-.form-group {
-    margin-bottom: 20px; /* Spacing between form groups */
-}
-
-/* Form labels */
-label {
-    display: block; /* Makes label take full width */
-    margin-bottom: 8px; /* Space between label and input */
-    font-weight: 500; /* Medium font weight */
-    color: #444;
-}
-
-/* Base styles for all input elements */
-input[type="text"],
-textarea,
-select {
-    width: 100%; /* Full width of container */
-    padding: 10px; /* Inner spacing */
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px; /* Readable text size */
-    font-family: inherit; /* Uses parent's font */
-}
-
-/* Textarea specific overrides */
-textarea {
-    resize: vertical; /* Allows vertical resizing only */
-    min-height: 80px; /* Minimum height before scroll appears */
-}
-
-/* ===== 4. Buttons and Actions ===== */
-/* Container for action buttons at the bottom of the form */
-.modal-actions {
-    display: flex; /* Enables flexbox layout */
-    justify-content: space-between; /* Spaces items evenly */
-    align-items: center; /* Vertically centers items */
-    margin-top: 20px; /* Space from content above */
-    padding-top: 20px; /* Top padding */
-    border-top: 1px solid #eee;
-}
-
-/* Base button styles - all buttons extend these */
-.btn {
-    padding: 8px 16px; /* Button padding */
-    border-radius: 4px; /* Rounded corners */
-    font-weight: 500; /* Medium font weight */
-    cursor: pointer; /* Changes cursor on hover */
-    transition: all 0.2s; /* Smooth transitions */
-    border: none; /* Removes default border */
-    font-size: 14px; /* Consistent text size */
-}
-
-/* Primary action button (blue) */
-.btn-primary {
-    background-color: #4a90e2;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #3a7bc8;
-}
-
-.btn-secondary {
-    background-color: #f0f0f0;
-    color: #333;
-    margin-right: 10px;
-}
-
-.btn-secondary:hover {
-    background-color: #e0e0e0;
-}
-
-.btn-delete {
-    background-color: #ff6b6b;
-    color: white;
-}
-
-.btn-delete:hover {
-    background-color: #e04f4f;
-}
-
-/* Document creation button */
-.createDocument-btn {
-    background: none;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 32px;
-    height: 32px;
+.close-cross-btn {
+    /* 1. Layout */
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    font-size: 24px;
-    color: #666;
-    transition: all 0.2s;
-    margin-left: 10px;
-}
-.createDocument-btn:hover {
-    background-color: #f5f5f5;
-    border-color: #ccc;
-    color: #333;
-}
-
-/* Close button in the top-right corner */
-.close-btn {
-    position: absolute; /* Position relative to modal-content */
-    top: 15px;
-    right: 15px;
-    background: none;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    
+    /* 2. Style Reset */
+    background: transparent;
     border: none;
-    font-size: 24px; /* Larger size for better clickability */
-    cursor: pointer; /* Changes cursor to pointer on hover */
-    padding: 5px 10px; /* Clickable area */
-    line-height: 1; /* Better vertical alignment */
-    color: #666;
+    border-radius: 6px;
+    cursor: pointer;
+    
+    /* 3. STRICT NEUTRAL COLORS (R=G=B) */
+    /* Changed from #6B778C (Blue-Gray) to #555555 (Pure Gray) */
+    color: #555555; 
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+    
+    /* 4. Force Remove Blue Outline */
+    outline: none !important;
 }
 
-.close-btn:hover {
-    color: #333;
+/* --- Interaction States --- */
+
+.close-cross-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1); 
+    color: #000000; /* Pure Black */
 }
 
-/* ===== 5. Subtasks ===== */
-/* Container for the subtasks list */
-.subtasks-list {
-    margin-top: 10px;
+.close-cross-btn:active {
+    background-color: rgba(0, 0, 0, 0.2);
+    transform: translateY(1px);
 }
 
-.subtask-description {
-    padding: 12px;
-    border-top: 1px solid #eee;
-    background-color: #fff;
-    max-height: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-clamp: 4; /* Standard property for better browser support */
-    line-height: 1.5;
+/* 5. FOCUS RING - Pure Dark Gray Shadow */
+.close-cross-btn:focus,
+.close-cross-btn:focus-visible {
+    outline: none !important;
+    /* Changed from #505f79 (Blue-Slate) to #333333 (Pure Charcoal) */
+    box-shadow: 0 0 0 2px #333333 !important; 
+}
+
+/* --- Dark Mode Support --- */
+@media (prefers-color-scheme: dark) {
+    .close-cross-btn {
+        color: #cccccc; /* Pure Light Gray */
+    }
+
+    .close-cross-btn:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #ffffff; /* Pure White */
+    }
+
+    .close-cross-btn:active {
+        background-color: rgba(255, 255, 255, 0.25);
+    }
+    
+    .close-cross-btn:focus,
+    .close-cross-btn:focus-visible {
+        box-shadow: 0 0 0 2px #ffffff !important; /* Pure White Ring */
+    }
+}
+
+/* ===== Scrollable Body Area ===== */
+.modal-body-scroll {
+    flex: 1; 
+    overflow-y: auto;
+    padding: 0 30px 20px 30px;
+}
+
+/* Grid Layout */
+.jira-body-grid {
     display: flex;
 }
 
-.subtask-description textarea {
+.jira-main-col {
+    flex: 1;
+    padding-right: 40px;
+}
+
+.jira-sidebar {
+    width: 300px;
+    padding-left: 20px;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ===== Typography & Inputs (Left Col) ===== */
+.field-group {
+    margin-bottom: 24px;
+}
+
+.jira-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--jira-text-main);
+    margin-bottom: 8px;
+}
+
+/* Title Input */
+.jira-title-input {
     width: 100%;
-    min-height: 80px;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--jira-text-main);
+    border: 2px solid transparent;
+    border-radius: 3px;
+    padding: 8px 6px;
+    margin-left: -8px;
+    background: transparent;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.jira-title-input:hover {
+    background-color: var(--jira-bg-hover);
+}
+
+.jira-title-input:focus {
+    background-color: #fff;
+    border-color: #4c9aff;
+    outline: none;
+}
+
+/* Description Textarea */
+.jira-textarea {
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 3px;
     padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--jira-text-main);
     resize: vertical;
+    transition: all 0.2s;
 }
 
-.subtask-description .btn {
-    margin-right: 8px;
+.jira-textarea:hover {
+    background-color: var(--jira-bg-hover);
 }
 
-.add-subtask-form {
+.jira-textarea:focus {
+    background-color: #fff;
+    border: 1px solid #4c9aff;
+    outline: none;
+    box-shadow: 0 0 0 1px #4c9aff;
+}
+
+/* ===== Subtasks Section ===== */
+.section-header {
     display: flex;
-    margin-top: 12px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.progress-pill {
+    font-size: 11px;
+    background: rgba(9, 30, 66, 0.08);
+    color: var(--jira-text-secondary);
+    padding: 2px 6px;
+    border-radius: 100px;
+    font-weight: 700;
+}
+
+.progress-bar-container {
+    height: 6px;
+    background: #dfe1e6;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--jira-blue);
+    transition: width 0.3s ease;
+}
+
+.subtasks-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.subtask-item {
+    margin-bottom: 4px;
+    border-radius: 3px;
+}
+
+.subtask-row {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.subtask-row:hover {
+    background-color: var(--jira-bg-hover);
+}
+
+.subtask-row:hover .delete-subtask-btn {
+    opacity: 1;
+}
+
+.jira-checkbox {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+    cursor: pointer;
 }
 
 .subtask-title {
     flex: 1;
-    min-width: 0; /* Allows text truncation to work */
-    margin: 0 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.subtask-input {
-    flex-grow: 1;
-    padding: 6px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 4px 0 0 4px;
-}
-
-.add-subtask-form .btn {
-    border-radius: 0 4px 4px 0;
-}
-
-/* Individual subtask item */
-.subtask-item {
-    margin-bottom: 8px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    overflow: hidden;
-    max-width: 100%; /* Ensure it doesn't overflow its container */
-}
-
-/* Header section of a subtask (contains checkbox, title, and delete button) */
-.subtask-header {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    cursor: pointer; /* Indicates the header is clickable */
-    background-color: #f8f9fa; /* Light gray background */
-    transition: background-color 0.2s; /* Smooth hover effect */
-    gap: 16px; /* Consistent spacing between flex children */
-}
-
-/* Delete button in subtask header */
-.subtask-header .btn-link {
-    margin-left: auto; /* Pushes button to the far right */
-    padding: 4px 8px;
-    opacity: 0.7; /* Slightly transparent by default */
-    transition: opacity 0.2s; /* Smooth hover effect */
-    border: none; /* Remove default button border */
-    background: none; /* Remove default button background */
-}
-
-.subtask-header:hover .btn-link {
-    opacity: 1;
-}
-
-.subtask-header .btn-link:hover {
-    background-color: rgba(220, 53, 69, 0.1);
-    border-radius: 4px;
-}
-
-.subtask-header:hover {
-    background-color: #f1f1f1;
-    background-color: #f0f0f0;
-}
-
-.subtask-checkbox {
-    margin: 0;
-    cursor: pointer;
-    flex-shrink: 0; /* Prevents the checkbox from shrinking */
-}
-
-.subtask-input {
-    flex: 1;
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
     font-size: 14px;
-    margin-right: 8px;
-    background-color: white;
+    color: var(--jira-text-main);
 }
 
-.subtask-input:focus {
-    outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-}
-
-.add-subtask-form {
-    display: flex;
-    margin-top: 10px;
-}
-
-.add-subtask-form .subtask-input {
-    margin-right: 8px;
-}
-
-.btn-sm {
-    padding: 4px 10px;
-    font-size: 13px;
-}
-
-/* Subtask status styles */
-.subtask-item.completed .subtask-input {
+.subtask-title.completed {
     text-decoration: line-through;
-    color: #888;
+    color: var(--jira-text-secondary);
 }
 
-/* Make checkboxes look better */
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+.icon-btn {
+    background: none;
+    border: none;
     cursor: pointer;
+    font-size: 16px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    padding: 4px;
 }
 
-/* Responsive adjustments */
-/* ===== 6. Responsive Design ===== */
-/* Adjust layout for smaller screens */
-@media (max-width: 600px) {
-    .modal-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .btn-delete {
-        order: 2;
-        width: 100%;
-        margin-top: 10px;
-    }
-    
-    .subtask-item {
-        flex-wrap: wrap;
-    }
-    
-    .subtask-input {
-        margin: 5px 0;
-        flex: 1 0 100%;
-    }
-    
-    .add-subtask-form {
-        flex-direction: column;
-    }
-    
-    .add-subtask-form .btn {
-        margin-top: 8px;
-        width: 100%;
-    }
-    
-    .modal-actions > div {
-        display: flex;
-        width: 100%;
-        justify-content: flex-end;
-    }
+.delete-subtask-btn {
+    opacity: 0;
 }
 
-/* Container that looks like a text input but holds chips */
-.tags-container {
-    border: 1px solid #ddd;
-    border-radius: 4px;
+/* Subtask Edit Area */
+.subtask-edit-area {
+    padding: 8px 8px 8px 36px;
+}
+
+.subtask-edit-area textarea {
+    width: 100%;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
     padding: 8px;
-    background-color: white;
+    font-size: 13px;
+    min-height: 60px;
+    margin-bottom: 6px;
+}
+
+.subtask-actions {
     display: flex;
-    flex-direction: column;
     gap: 8px;
 }
 
-/* Area holding the actual chips */
-.tags-list {
+/* Add Subtask Input */
+.add-subtask-row {
+    margin-top: 8px;
+}
+
+.jira-ghost-input {
+    width: 100%;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 3px;
+    background: transparent;
+}
+
+.jira-ghost-input:hover {
+    background-color: var(--jira-bg-hover);
+}
+
+.jira-ghost-input:focus {
+    background-color: #fff;
+    outline: 2px solid #4c9aff;
+}
+
+/* ===== Documents ===== */
+.document-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    background: #fff;
+}
+
+.doc-icon {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.document-link {
+    background: none;
+    border: none;
+    color: var(--jira-blue);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.document-link:hover {
+    text-decoration: underline;
+}
+
+.empty-state {
+    font-size: 13px;
+    color: var(--jira-text-secondary);
+    font-style: italic;
+    padding: 8px 0;
+}
+
+/* ===== Sidebar (Right Col) ===== */
+.jira-label-uppercase {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--jira-text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.jira-select {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    /* UPDATED: Force font family explicitly */
+    font-family: var(--font-stack);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    text-transform: uppercase;
+    appearance: none;
+    text-align: center;
+    background-color: #dfe1e6;
+    color: #42526e;
+    transition: background 0.2s;
+}
+
+.jira-select.status-todo { background-color: #dfe1e6; color: #42526e; }
+.jira-select.status-inProgress { background-color: #deebff; color: #0052cc; }
+.jira-select.status-test { background-color: #fff0b3; color: #172b4d; }
+.jira-select.status-done { background-color: #e3fcef; color: #006644; }
+
+.tags-container {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
 }
 
-/* The individual tag bubble */
-.tag-chip {
-    background-color: #f0f0f0; /* Matches your btn-secondary */
-    color: #333;
-    padding: 4px 10px;
-    border-radius: 16px; /* Pill shape */
+.tag-pill {
+    background-color: #ebecf0;
+    color: #42526e;
     font-size: 13px;
-    display: flex;
+    padding: 2px 8px;
+    border-radius: 3px;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    border: 1px solid #e0e0e0;
 }
 
-/* The little 'x' to remove a tag */
-.tag-remove-btn {
+.tag-remove {
     background: none;
     border: none;
+    color: #6b778c;
+    margin-left: 4px;
     cursor: pointer;
-    color: #999;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 0;
+    font-size: 16px;
     line-height: 1;
-    display: flex;
-    align-items: center;
 }
 
-.tag-remove-btn:hover {
-    color: #ff6b6b; /* Matches your btn-delete */
-}
+.tag-remove:hover { color: #172b4d; }
 
-/* Override standard input styles for the tag input to make it blend in */
-/* We use specific specificity to overwrite the global input[type="text"] style */
-.tags-container input[type="text"].tag-input {
+.tag-input-ghost {
     border: none;
-    padding: 4px 0;
-    margin: 0;
-    box-shadow: none;
     background: transparent;
-    width: 100%;
+    font-size: 13px;
+    padding: 4px;
+    min-width: 80px;
 }
 
-.tags-container input[type="text"].tag-input:focus {
-    outline: none;
-    box-shadow: none;
+.tag-input-ghost:focus { outline: none; }
+
+.meta-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.meta-label { color: var(--jira-text-secondary); }
+.meta-value { color: var(--jira-text-main); }
+
+/* ===== BUTTONS ===== */
+
+.btn {
+    border: none;
+    border-radius: 3px;
+    padding: 0 12px;
+    height: 32px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background-color: var(--jira-blue);
+    color: white;
+}
+.btn-primary:hover { background-color: var(--jira-blue-hover); }
+
+.btn-danger {
+    background-color: var(--jira-red-bg);
+    color: var(--jira-red);
+}
+.btn-danger:hover {
+    background-color: var(--jira-red-hover);
+}
+
+.btn-ghost {
+    background: none;
+    color: var(--jira-text-main);
+}
+.btn-ghost:hover { background-color: rgba(9, 30, 66, 0.08); }
+
+.btn-xs {
+    padding: 0 8px;
+    height: 24px;
+    font-size: 12px;
+}
+
+/* ===== FOOTER (Fixed Bottom) ===== */
+.modal-footer {
+    padding: 16px 30px 20px 30px;
+    border-top: 1px solid var(--jira-border);
+    background-color: var(--jira-bg);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .jira-body-grid {
+        flex-direction: column;
+    }
+    .jira-main-col { padding-right: 0; }
+    .jira-sidebar { 
+        width: 100%; 
+        padding-left: 0; 
+        border-top: 1px solid var(--jira-border);
+        margin-top: 20px;
+        padding-top: 20px;
+    }
 }
