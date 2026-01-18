@@ -168,18 +168,23 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
             {processedFileTree.epics.length > 0 && (
                 <div className="epic-section">
                     <h3>Epics</h3>
-                    {processedFileTree.epics.map(epic => (
+                    {processedFileTree.epics.filter(epic =>
+                        epic.tasks.some(task =>
+                            task.documents && task.documents.length > 0
+                        )
+                    ).map(epic => (
                         <div key={`epic-${epic.id}`} className="epic-item">
                             <h4>{epic.title}</h4>
                             <ul className="task-list">
-                                {epic.tasks.map(task => (
+                                {epic.tasks.filter(task => task.documents && task.documents.length > 0)
+                                    .map(task => (
                                     <li key={`task-${task.id}`} className="task-item">
                                         <div className="task-title">{task.title}</div>
-                                        <ul className="document-list">
+                                        <ul className="document-list-documentTree">
                                             {task.documents && task.documents.map(doc => (
                                                 <li
                                                     key={`doc-${doc.id}`}
-                                                    className={`document-item ${doc.isActive ? 'active' : ''}`}
+                                                    className={`document-item-documentTree ${doc.isActive ? 'active' : ''}`}
                                                     onClick={(e) => handleDocumentClick(doc.id, e)}
                                                     title={doc.title}
                                                 >
@@ -204,14 +209,16 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
             <div className="tasks-section">
                 <h3>Tasks</h3>
                 {processedFileTree.tasksWithoutEpic.length > 0 && (
-                    processedFileTree.tasksWithoutEpic.map(task => (
+                    processedFileTree.tasksWithoutEpic
+                        .filter(task => task.documents && task.documents.length > 0)
+                        .map(task => (
                         <div key={`task-${task.id}`} className="task-item">
                             <h4 className="task-title">{task.title}</h4>
-                            <ul className="document-list">
+                            <ul className="document-list-documentTree">
                                 {task.documents && task.documents.map(doc => (
                                     <li
                                         key={`doc-${doc.id}`}
-                                        className={`document-item ${doc.isActive ? 'active' : ''}`}
+                                        className={`document-item-documentTree ${doc.isActive ? 'active' : ''}`}
                                         onClick={(e) => handleDocumentClick(doc.id, e)}
                                         title={doc.title}
                                     >
@@ -231,12 +238,12 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
             {/* Standalone documents */}
             {processedFileTree.standaloneDocuments.length > 0 && (
                 <div className="documents-section">
-                    <h3>Documents</h3>
-                    <ul className="document-list">
+                    <h3>Uncategorized Documents</h3>
+                    <ul className="document-list-documentTree">
                         {processedFileTree.standaloneDocuments.map(doc => (
                             <li
                                 key={`doc-${doc.id}`}
-                                className={`document-item ${doc.isActive ? 'active' : ''}`}
+                                className={`document-item-documentTree ${doc.isActive ? 'active' : ''}`}
                                 onClick={(e) => handleDocumentClick(doc.id, e)}
                                 title={doc.title}
                             >

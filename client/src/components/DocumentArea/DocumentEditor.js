@@ -140,14 +140,14 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
             </div>
 
             <div className="editor-actions">
-                <button onClick={() => handleSave(content)} type="button">
+                <button onClick={() => handleSave(content)} type="button" className="btn btn-primary">
                     Save
                 </button>
                 {documentId && (
                     <button
                         onClick={() => handleDelete(documentId)}
                         type="button"
-                        className="btn-delete"
+                        className="btn btn-danger"
                     >
                         Delete
                     </button>
@@ -156,7 +156,7 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
                     <button
                     onClick={() => navigateTask(taskId)}
                     type="button"
-                    className="btn-delete"
+                    className="btn btn-secondary"
                 >
                     Go to Task
                 </button>
