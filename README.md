@@ -26,11 +26,10 @@ In root folder:
 
 2. Copy/Paste the .env_backend file
    ```bash
-   - Unzip the file "setup" and copy the .env_backend directly into the root folder \agileOrbit
-   - Rename the file to .env
+   - Unzip the file "setup" and copy/paste the /backend/.env directly into the root folder \agileOrbit
    ```
 
-3. Start the backend server:
+3. Start the backend server (in the root folder):
    ```bash
    npm run dev
    ```
@@ -50,8 +49,7 @@ In root folder:
 3. Install dependencies:
    ```bash
    - If you have not unzipped the folder "setup", unzip the folder
-   - Copy/Paste the .env_frontend file into the \agileOrbit\client subfolder
-   - Rename the file to .env 
+   - Copy/Paste the /frontend/.env file into the \agileOrbit\client subfolder
    ```
 
 4. Start the development server (inside the root directory):
@@ -66,11 +64,11 @@ In root folder:
 ### Frontend (from /client)
 - `npm start` - Start development server
 - `npm test` - Run tests
-- `npm run build` - Create production build
 
 ### Backend (from /server)
 - `npm start` - Start server in production mode
 - `npm run dev` - Start server in development mode with nodemon
+- `npm run client` - start the Frontend in development mode
 
 
 ## 🔍 Troubleshooting
