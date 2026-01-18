@@ -12,7 +12,6 @@ AgileOrbit is a modern, full-stack web application that combines task management
 - **Document Organization**: Store and organize project documents with a hierarchical structure
 - **Epic & Subtask System**: Break down work into epics and subtasks for better organization
 - **Real-time Collaboration**: Team members can collaborate on tasks and documents in real-time
-- **Responsive Design**: Works seamlessly across desktop and mobile devices
 
 ### Tech Stack
 
@@ -119,7 +118,7 @@ In root folder:
 - **Environment Variables Not Loading**: Restart your development server after changing `.env` files
 - **Network Request Failed**: Check for typos in Firebase config and ensure all services are enabled
 - **Unversioning a file you don't want to commit**: git rm --cached <filename>
-- **Failed login**: may need a refresh of the page before you can login again - the browser can open faster than the connection is stable
+- **Failed login/Unresponsive Login**: may need a refresh of the page before you can login again - the browser can open faster than the connection is stable
 
 ## 📝 Notes
 - Never commit `.env` files to version control
