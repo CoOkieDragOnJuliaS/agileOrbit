@@ -73,7 +73,7 @@ useEffect(() => {
                     }}
                     className="btn btn-secondary"
                 >
-                    {showEditor ? "Editor schließen" : "Neues Dokument"}
+                    {showEditor ? "Close Editor" : "New Document"}
                 </button>
             </Header>
             <div className="document-content">

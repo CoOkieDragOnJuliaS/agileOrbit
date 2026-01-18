@@ -127,18 +127,18 @@ const Whiteboard = () => {
         <div className="whiteboard-wrapper">
             <div className="whiteboard-toolbar">
                 <div className="tool-group">
-                    <label>Farbe:</label>
+                    <label>Color:</label>
                     <input type="color" value={color} onChange={(e) => setColor(e.target.value)} />
                 </div>
                 <div className="tool-group">
-                    <label>Stärke:</label>
+                    <label>Boldness:</label>
                     <input type="range" min="1" max="20" value={lineWidth} onChange={(e) => setLineWidth(e.target.value)} />
                 </div>
-                <button onClick={clearCanvas} className="clear-btn">Löschen</button>
+                <button onClick={clearCanvas} className="clear-btn">Delete/Clear</button>
                 
                 {/* NEW SAVE BUTTON */}
                 <button onClick={handleSaveClick} style={{ marginLeft: '10px', padding: '5px 10px', cursor: 'pointer' }}>
-                    💾 Speichern
+                    💾 Save Whiteboard
                 </button>
             </div>
             <div className="canvas-container">
