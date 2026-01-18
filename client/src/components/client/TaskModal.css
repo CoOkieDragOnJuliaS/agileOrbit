@@ -1,376 +1,534 @@
-/* 
- * TaskModal.css
- * Styles for the TaskModal component and its children
- * 
- * Structure:
- * 1. Modal overlay and container
- * 2. Form elements and inputs
- * 3. Subtasks list and items
- * 4. Buttons and interactive elements
- * 5. Responsive design
+/* * TaskModal.css - Jira Inspired Theme
  */
 
-/* ===== 1. Modal Overlay and Container ===== */
-/* Background overlay that covers the entire viewport */
+/* ===== Variables & Reset ===== */
+:root {
+    --jira-bg: #ffffff;
+    --jira-bg-hover: #ebecf0;
+    --jira-border: #dfe1e6;
+    --jira-text-main: #172b4d;
+    --jira-text-secondary: #5e6c84;
+    --jira-blue: #0052cc;
+    --jira-blue-hover: #0065ff;
+    --jira-red: #de350b;
+    --jira-red-bg: #ffebe6;
+    --jira-red-hover: #ffbdad;
+    --modal-width: 900px;
+    
+    /* Modern System Font Stack */
+    --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Fix for input/select font inheritance */
+body, input, select, textarea, button {
+    font-family: var(--font-stack);
+}
+
+/* ===== Overlay & Content Structure ===== */
 .modal-overlay {
-    position: fixed; /* Fixed positioning relative to viewport */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    display: flex; /* Enables flexbox layout */
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    z-index: 1000; /* Ensures modal appears above other content */
-    padding: 20px; /* Spacing around the modal */
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(9, 30, 66, 0.54);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 40px 20px;
 }
 
-/* Main container for the modal dialog */
-.modal-content {
-    background: white;
-    padding: 30px; /* Inner spacing */
-    position: relative; /* For positioning child elements */
-    border-radius: 8px; /* Rounded corners */
-    width: 100%; /* Full width of parent */
-    max-width: 600px; /* Maximum width */
-    max-height: 90vh; /* Maximum height relative to viewport */
-    overflow-y: auto; /* Enables vertical scrolling if content overflows */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    position: relative;
+.modal-content.jira-layout {
+    background: var(--jira-bg);
+    width: 100%;
+    max-width: var(--modal-width);
+    height: 90vh;
+    max-height: 900px;
+    
+    /* CHANGE: Increased from 3px to 16px for a modern round look */
+    border-radius: 16px; 
+    
+    box-shadow: 0 8px 16px -4px rgba(9, 30, 66, 0.25), 0 0 0 1px rgba(9, 30, 66, 0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Important: keeps content inside the rounded corners */
 }
 
-/* Header section */
+/* ===== Header ===== */
 .modal-header {
+    padding: 20px 30px 10px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+
+.breadcrumbs span {
+    color: var(--jira-text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.close-cross-btn {
+    /* 1. RESET GLOBAL APP.CSS STYLES */
+    padding: 0 !important;             /* Kill the 10px 20px padding from App.css */
+    margin: 0 !important;
+    background: transparent !important; /* Ensure no background color */
+    border: none !important;
+    box-shadow: none !important;       /* Remove any global card shadows */
+    
+    /* 2. DEFINE EXACT SIZE */
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;        /* Prevent squishing */
+    
+    /* 3. ALIGNMENT */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    
+    /* 4. VISIBILITY (The "Invincible" Fix) */
+    color: #555555 !important;         /* Dark Gray */
+    z-index: 50;                       /* Ensure it's on top */
+}
+
+/* Force the SVG icon to respect the color */
+.close-cross-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: #555555 !important;          /* HARDCODE DARK GRAY */
+    pointer-events: none;              /* Clicks go through to button */
+}
+
+/* Hover Effect */
+.close-cross-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.close-cross-btn:hover svg {
+    fill: #000000 !important;          /* Black on hover */
+}
+
+/* ===== Scrollable Body Area ===== */
+.modal-body-scroll {
+    flex: 1; 
+    overflow-y: auto;
+    padding: 0 30px 20px 30px;
+}
+
+/* Grid Layout */
+.jira-body-grid {
+    display: flex;
+}
+
+.jira-main-col {
+    flex: 1;
+    padding-right: 40px;
+}
+
+.jira-sidebar {
+    width: 300px;
+    padding-left: 20px;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ===== Typography & Inputs (Left Col) ===== */
+.field-group {
+    margin-bottom: 24px;
+}
+
+.jira-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--jira-text-main);
+    margin-bottom: 8px;
+}
+
+/* Title Input */
+.jira-title-input {
+    width: 100%;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--jira-text-main);
+    border: 2px solid transparent;
+    border-radius: 3px;
+    padding: 8px 6px;
+    margin-left: -8px;
+    background: transparent;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.jira-title-input:hover {
+    background-color: var(--jira-bg-hover);
+}
+
+.jira-title-input:focus {
+    background-color: #fff;
+    border-color: #4c9aff;
+    outline: none;
+}
+
+/* Description Textarea */
+.jira-textarea {
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--jira-text-main);
+    resize: vertical;
+    transition: all 0.2s;
+}
+
+.jira-textarea:hover {
+    background-color: var(--jira-bg-hover);
+}
+
+.jira-textarea:focus {
+    background-color: #fff;
+    border: 1px solid #4c9aff;
+    outline: none;
+    box-shadow: 0 0 0 1px #4c9aff;
+}
+
+/* ===== Subtasks Section ===== */
+.section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    position: relative;
-    padding-right: 40px; /* Space for the close button */
+    margin-bottom: 8px;
 }
 
-.modal-header h2 {
+.progress-pill {
+    font-size: 11px;
+    background: rgba(9, 30, 66, 0.08);
+    color: var(--jira-text-secondary);
+    padding: 2px 6px;
+    border-radius: 100px;
+    font-weight: 700;
+}
+
+.progress-bar-container {
+    height: 6px;
+    background: #dfe1e6;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--jira-blue);
+    transition: width 0.3s ease;
+}
+
+.subtasks-list ul {
+    list-style: none;
+    padding: 0;
     margin: 0;
-    flex-grow: 1; /* take available space with flex-grow */
 }
 
-/* ===== 2. Typography ===== */
-/* Main heading */
-h2 {
-    margin-top: 0; /* Removes default top margin */
-    margin-bottom: 20px; /* Spacing below heading */
-    color: #333;
+.subtask-item {
+    margin-bottom: 4px;
+    border-radius: 3px;
 }
 
-/* ===== 3. Form Elements ===== */
-/* Group of related form controls */
-.form-group {
-    margin-bottom: 20px; /* Spacing between form groups */
-}
-
-/* Form labels */
-label {
-    display: block; /* Makes label take full width */
-    margin-bottom: 8px; /* Space between label and input */
-    font-weight: 500; /* Medium font weight */
-    color: #444;
-}
-
-/* Base styles for all input elements */
-input[type="text"],
-textarea,
-select {
-    width: 100%; /* Full width of container */
-    padding: 10px; /* Inner spacing */
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px; /* Readable text size */
-    font-family: inherit; /* Uses parent's font */
-}
-
-/* Textarea specific overrides */
-textarea {
-    resize: vertical; /* Allows vertical resizing only */
-    min-height: 80px; /* Minimum height before scroll appears */
-}
-
-/* ===== 4. Buttons and Actions ===== */
-/* Container for action buttons at the bottom of the form */
-.modal-actions {
-    display: flex; /* Enables flexbox layout */
-    justify-content: space-between; /* Spaces items evenly */
-    align-items: center; /* Vertically centers items */
-    margin-top: 20px; /* Space from content above */
-    padding-top: 20px; /* Top padding */
-    border-top: 1px solid #eee;
-}
-
-/* Base button styles - all buttons extend these */
-.btn {
-    padding: 8px 16px; /* Button padding */
-    border-radius: 4px; /* Rounded corners */
-    font-weight: 500; /* Medium font weight */
-    cursor: pointer; /* Changes cursor on hover */
-    transition: all 0.2s; /* Smooth transitions */
-    border: none; /* Removes default border */
-    font-size: 14px; /* Consistent text size */
-}
-
-/* Primary action button (blue) */
-.btn-primary {
-    background-color: #4a90e2;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #3a7bc8;
-}
-
-.btn-secondary {
-    background-color: #f0f0f0;
-    color: #333;
-    margin-right: 10px;
-}
-
-.btn-secondary:hover {
-    background-color: #e0e0e0;
-}
-
-.btn-delete {
-    background-color: #ff6b6b;
-    color: white;
-}
-
-.btn-delete:hover {
-    background-color: #e04f4f;
-}
-
-/* Document creation button */
-.createDocument-btn {
-    background: none;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 32px;
-    height: 32px;
+.subtask-row {
     display: flex;
     align-items: center;
-    justify-content: center;
+    padding: 6px 8px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 24px;
-    color: #666;
-    transition: all 0.2s;
-    margin-left: 10px;
-}
-.createDocument-btn:hover {
-    background-color: #f5f5f5;
-    border-color: #ccc;
-    color: #333;
 }
 
-/* Close button in the top-right corner */
-.close-btn {
-    position: absolute; /* Position relative to modal-content */
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 24px; /* Larger size for better clickability */
-    cursor: pointer; /* Changes cursor to pointer on hover */
-    padding: 5px 10px; /* Clickable area */
-    line-height: 1; /* Better vertical alignment */
-    color: #666;
+.subtask-row:hover {
+    background-color: var(--jira-bg-hover);
 }
 
-.close-btn:hover {
-    color: #333;
+.subtask-row:hover .delete-subtask-btn {
+    opacity: 1;
 }
 
-/* ===== 5. Subtasks ===== */
-/* Container for the subtasks list */
-.subtasks-list {
-    margin-top: 10px;
-}
-
-.subtask-description {
-    padding: 12px;
-    border-top: 1px solid #eee;
-    background-color: #fff;
-    max-height: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-clamp: 4; /* Standard property for better browser support */
-    line-height: 1.5;
-    display: flex;
-}
-
-.subtask-description textarea {
-    width: 100%;
-    min-height: 80px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    resize: vertical;
-}
-
-.subtask-description .btn {
-    margin-right: 8px;
-}
-
-.add-subtask-form {
-    display: flex;
-    margin-top: 12px;
+.jira-checkbox {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+    cursor: pointer;
 }
 
 .subtask-title {
     flex: 1;
-    min-width: 0; /* Allows text truncation to work */
-    margin: 0 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 14px;
+    color: var(--jira-text-main);
 }
 
-.subtask-input {
-    flex-grow: 1;
-    padding: 6px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 4px 0 0 4px;
+.subtask-title.completed {
+    text-decoration: line-through;
+    color: var(--jira-text-secondary);
 }
 
-.add-subtask-form .btn {
-    border-radius: 0 4px 4px 0;
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    padding: 4px;
 }
 
-/* Individual subtask item */
-.subtask-item {
-    margin-bottom: 8px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    overflow: hidden;
-    max-width: 100%; /* Ensure it doesn't overflow its container */
+.delete-subtask-btn {
+    opacity: 0;
 }
 
-/* Header section of a subtask (contains checkbox, title, and delete button) */
-.subtask-header {
+/* Subtask Edit Area */
+.subtask-edit-area {
+    padding: 8px 8px 8px 36px;
+}
+
+.subtask-edit-area textarea {
+    width: 100%;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    padding: 8px;
+    font-size: 13px;
+    min-height: 60px;
+    margin-bottom: 6px;
+}
+
+.subtask-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Add Subtask Input */
+.add-subtask-row {
+    margin-top: 8px;
+}
+
+.jira-ghost-input {
+    width: 100%;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 3px;
+    background: transparent;
+}
+
+.jira-ghost-input:hover {
+    background-color: var(--jira-bg-hover);
+}
+
+.jira-ghost-input:focus {
+    background-color: #fff;
+    outline: 2px solid #4c9aff;
+}
+
+/* ===== Documents ===== */
+.document-item {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    cursor: pointer; /* Indicates the header is clickable */
-    background-color: #f8f9fa; /* Light gray background */
-    transition: background-color 0.2s; /* Smooth hover effect */
-    gap: 16px; /* Consistent spacing between flex children */
+    padding: 6px 8px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    background: #fff;
 }
 
-/* Delete button in subtask header */
-.subtask-header .btn-link {
-    margin-left: auto; /* Pushes button to the far right */
-    padding: 4px 8px;
-    opacity: 0.7; /* Slightly transparent by default */
-    transition: opacity 0.2s; /* Smooth hover effect */
-    border: none; /* Remove default button border */
-    background: none; /* Remove default button background */
+.doc-icon {
+    margin-right: 8px;
+    font-size: 16px;
 }
 
-.subtask-header:hover .btn-link {
-    opacity: 1;
-}
-
-.subtask-header .btn-link:hover {
-    background-color: rgba(220, 53, 69, 0.1);
-    border-radius: 4px;
-}
-
-.subtask-header:hover {
-    background-color: #f1f1f1;
-    background-color: #f0f0f0;
-}
-
-.subtask-checkbox {
-    margin: 0;
+.document-link {
+    background: none;
+    border: none;
+    color: var(--jira-blue);
     cursor: pointer;
-    flex-shrink: 0; /* Prevents the checkbox from shrinking */
-}
-
-.subtask-input {
-    flex: 1;
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
     font-size: 14px;
-    margin-right: 8px;
-    background-color: white;
+    font-weight: 500;
 }
 
-.subtask-input:focus {
-    outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+.document-link:hover {
+    text-decoration: underline;
 }
 
-.add-subtask-form {
-    display: flex;
-    margin-top: 10px;
-}
-
-.add-subtask-form .subtask-input {
-    margin-right: 8px;
-}
-
-.btn-sm {
-    padding: 4px 10px;
+.empty-state {
     font-size: 13px;
+    color: var(--jira-text-secondary);
+    font-style: italic;
+    padding: 8px 0;
 }
 
-/* Subtask status styles */
-.subtask-item.completed .subtask-input {
-    text-decoration: line-through;
-    color: #888;
+/* ===== Sidebar (Right Col) ===== */
+.jira-label-uppercase {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--jira-text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
 }
 
-/* Make checkboxes look better */
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+.jira-select {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    
+    /* 1. Force the font to match your App.css (Inter) */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    
+    border: none;
+    border-radius: 3px;
     cursor: pointer;
+    text-transform: uppercase;
+    appearance: none;
+    text-align: center;
+    background-color: #dfe1e6;
+    color: #42526e;
+    transition: background 0.2s;
 }
 
-/* Responsive adjustments */
-/* ===== 6. Responsive Design ===== */
-/* Adjust layout for smaller screens */
-@media (max-width: 600px) {
-    .modal-actions {
+/* 2. SPECIFICALLY Target the dropdown options to fix the "Old Font" look */
+.jira-select option {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-weight: 500;
+    padding: 10px;
+}
+
+.jira-select.status-todo { background-color: #dfe1e6; color: #42526e; }
+.jira-select.status-inProgress { background-color: #deebff; color: #0052cc; }
+.jira-select.status-test { background-color: #fff0b3; color: #172b4d; }
+.jira-select.status-done { background-color: #e3fcef; color: #006644; }
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag-pill {
+    background-color: #ebecf0;
+    color: #42526e;
+    font-size: 13px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.tag-remove {
+    background: none;
+    border: none;
+    color: #6b778c;
+    margin-left: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.tag-remove:hover { color: #172b4d; }
+
+.tag-input-ghost {
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    padding: 4px;
+    min-width: 80px;
+}
+
+.tag-input-ghost:focus { outline: none; }
+
+.meta-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.meta-label { color: var(--jira-text-secondary); }
+.meta-value { color: var(--jira-text-main); }
+
+/* ===== BUTTONS ===== */
+
+.btn {
+    border: none;
+    border-radius: 3px;
+    padding: 0 12px;
+    height: 32px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background-color: var(--jira-blue);
+    color: white;
+}
+.btn-primary:hover { background-color: var(--jira-blue-hover); }
+
+.btn-danger {
+    background-color: var(--jira-red-bg);
+    color: var(--jira-red);
+}
+.btn-danger:hover {
+    background-color: var(--jira-red-hover);
+}
+
+.btn-ghost {
+    background: none;
+    color: var(--jira-text-main);
+}
+.btn-ghost:hover { background-color: rgba(9, 30, 66, 0.08); }
+
+.btn-xs {
+    padding: 0 8px;
+    height: 24px;
+    font-size: 12px;
+}
+
+/* ===== FOOTER (Fixed Bottom) ===== */
+.modal-footer {
+    padding: 16px 30px 20px 30px;
+    border-top: 1px solid var(--jira-border);
+    background-color: var(--jira-bg);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .jira-body-grid {
         flex-direction: column;
-        gap: 10px;
     }
-    
-    .btn-delete {
-        order: 2;
-        width: 100%;
-        margin-top: 10px;
-    }
-    
-    .subtask-item {
-        flex-wrap: wrap;
-    }
-    
-    .subtask-input {
-        margin: 5px 0;
-        flex: 1 0 100%;
-    }
-    
-    .add-subtask-form {
-        flex-direction: column;
-    }
-    
-    .add-subtask-form .btn {
-        margin-top: 8px;
-        width: 100%;
-    }
-    
-    .modal-actions > div {
-        display: flex;
-        width: 100%;
-        justify-content: flex-end;
+    .jira-main-col { padding-right: 0; }
+    .jira-sidebar { 
+        width: 100%; 
+        padding-left: 0; 
+        border-top: 1px solid var(--jira-border);
+        margin-top: 20px;
+        padding-top: 20px;
     }
 }

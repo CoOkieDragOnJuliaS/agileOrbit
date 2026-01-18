@@ -74,12 +74,13 @@ router.get("/board", async (req, res) => {
  * @param {string} [status=''] - Initial task status
  * @param {string} boardID - ID of the board this task belongs to (required)
  * @param {string} [epicId=''] - Optional epic ID this task is associated with
+ * @param {string[]} [tags=[]] - Optional array of tag strings
  * @returns {Object} The created task with its ID
  * @access Public
  */
 router.post("/", async (req, res) => {
   try {
-    const { title, content = '', status = '', boardID, epicId = '' } = req.body;
+    const { title, content = '', status = '', boardID, epicId = '', tags = [] } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: "Title is required" });
@@ -95,6 +96,7 @@ router.post("/", async (req, res) => {
       status,
       boardID,
       epicId,
+      tags, // Add tags to the task data
       createdAt: now,
       updatedAt: now
     };
@@ -118,13 +120,14 @@ router.post("/", async (req, res) => {
  * @param {string} [title] - New task title
  * @param {string} [description] - New task description
  * @param {string} [status] - New task status
+ * @param {string[]} [tags] - New array of tags
  * @returns {Object} The updated task
  * @access Public
  */
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status, epicId } = req.body;
+    const { title, description, status, tags, epicId } = req.body;
     
     const taskRef = getTasksCollection().doc(id);
     const taskDoc = await taskRef.get();
@@ -138,6 +141,7 @@ router.put("/:id", async (req, res) => {
       ...(description !== undefined && { description }),
       ...(status !== undefined && { status }),
       ...(epicId !== undefined && { epicId }),
+      ...(tags !== undefined && { tags }), // Update tags if provided
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
@@ -185,13 +189,15 @@ router.delete("/:id", async (req, res) => {
  * @param {string} content - Task content/description
  * @param {string} title - Task title
  * @param {string} [status=todo] - Task status
+ * @param {string[]} [tags=[]] - Task tags
  * @returns {Object} The created/updated task ID
  * @access Public
  */
 router.post("/saveTask", async (req, res) => {
   try {
-    const { id, content, title } = req.body;
+    const { id, content, title, tags = [] } = req.body;
     const status = req.body.status || 'todo';
+    const boardID = req.body.boardID || 'default-board';
 
     if (!content) {
       return res.status(400).json({ error: "Content required" });
@@ -213,7 +219,8 @@ router.post("/saveTask", async (req, res) => {
         content,
         title,
         epicId: "1",
-        status: "",
+        status: status, // Use correct status
+        tags: tags, // Update tags
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
@@ -226,7 +233,8 @@ router.post("/saveTask", async (req, res) => {
       content,
       title,
       epicId: "1",
-      status: "",
+      status: status, // Use correct status
+      tags: tags, // Save tags
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });

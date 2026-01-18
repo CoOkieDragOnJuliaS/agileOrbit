@@ -17,6 +17,7 @@ import './TaskModal.css';
 
 // API base URL for subtasks endpoint
 const API_BASE_URL = '/api/subtasks';
+const MAX_TAGS = 5;
 
 /**
  * Main TaskModal component
@@ -34,12 +35,28 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
      * - isSaving: Tracks if a save operation is in progress
      */
 
-     //Initializing navigation to another component with React
+        //Initializing navigation to another component with React
     const navigate = useNavigate();
-    /**
-     * Effect hook to handle clicks outside the modal content
-     * Closes the modal when clicking on the overlay
-     */
+
+    // --- STATE MANAGEMENT ---
+
+    const [formData, setFormData] = useState({
+        title: task?.title || '',
+        description: task?.description || '',
+        status: task?.status || 'todo',
+        tags: task?.tags || []
+    });
+
+    const [tagInput, setTagInput] = useState('');
+
+    const [subtasks, setSubtasks] = useState([]);
+    const [newSubtask, setNewSubtask] = useState('');
+    const [editingSubtaskId, setEditingSubtaskId] = useState(null);
+    const [editingDescription, setEditingDescription] = useState('');
+    const [documents, setDocuments] = useState([]);
+
+    // --- EFFECTS ---
+
     useEffect(() => {
         const handleOverlayClick = (e) => {
             if (e.target.classList.contains('modal-overlay')) {
@@ -61,10 +78,9 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
             title: task?.title || '',
             description: task?.description || '',
             status: task?.status || 'todo',
-            epicId: task?.epicId || ''
+            epicId: task?.epicId || '',
+            tags: task?.tags || []
         });
-
-       
 
         const fetchSubtasks = async () => {
             if (!task?.id) return;
@@ -103,7 +119,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
 
         const fetchDocuments = async () => {
             if (!task?.id) return;
-    
+
             try {
                 const response = await fetch(`/api/documents/fileTree/${task.id}`, {
                     method: 'GET',
@@ -112,19 +128,19 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                         'Content-Type': 'application/json',
                     },
                 });
-    
+
                 //handle if there are no subtasks yet, set empty array
                 if (response.status === 404) {
                     //No subtasks found
                     setDocuments([]);
                     return;
                 }
-    
+
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
                     throw new Error(errorData.message || 'Failed to fetch documents');
                 }
-    
+
                 const DocumentData = await response.json();
                 setDocuments(DocumentData);
             } catch (error) {
@@ -136,7 +152,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
 
         const fetchEpics = async () => {
             if (!task?.id) return;
-    
+
             try {
                 const response = await fetch(`/api/epics/fileTree/`, {
                     method: 'GET',
@@ -145,19 +161,19 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                         'Content-Type': 'application/json',
                     },
                 });
-    
+
                 //handle if there are no subtasks yet, set empty array
                 if (response.status === 404) {
                     //No subtasks found
                     setEpics([]);
                     return;
                 }
-    
+
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
                     throw new Error(errorData.message || 'Failed to fetch documents');
                 }
-    
+
                 const DocumentData = await response.json();
                 setEpics(DocumentData);
             } catch (error) {
@@ -170,29 +186,10 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         fetchEpics();
         fetchDocuments();
     }, [task]);
-    
 
-    // Form state for task details
-    const [formData, setFormData] = useState({
-        title: task?.title || '',
-        description: task?.description || '',
-        status: task?.status || 'todo', // Default status is 'todo'
-        epicId: task?.epicId || []
-    });
 
-    // State for managing subtasks
-    const [subtasks, setSubtasks] = useState([]); // List of subtasks for the current task
-    const [newSubtask, setNewSubtask] = useState(''); // Input field for new subtask title
-    const [editingSubtaskId, setEditingSubtaskId] = useState(null); // ID of subtask being edited
-    const [editingDescription, setEditingDescription] = useState(''); // Current description being edited
-    const [documents, setDocuments] = useState([]); // List of Documents to this task
-    const [epics, setEpics] = useState([]);// List of Epics to this task
+    // --- HANDLERS ---
 
-    /**
-     * Handles changes to form inputs
-     * Updates the formData state with new values
-     * @param {Object} e - The change event from the input field
-     */
     const handleChange = (e) => {
         const {name, value} = e.target;
         setFormData(prev => ({
@@ -211,10 +208,38 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         onSave(formData);
     };
 
-    /**
-     * Adds a new subtask to the current task
-     * @param {Object} e - The click or keydown event
-     */
+    // --- TAG HANDLERS ---
+
+    const handleAddTag = (e) => {
+        if (e) e.preventDefault();
+        const newTag = tagInput.trim();
+        if (!newTag) return;
+        if (formData.tags.includes(newTag)) return;
+        if (formData.tags.length >= MAX_TAGS) return;
+
+        setFormData(prev => ({
+            ...prev,
+            tags: [...prev.tags, newTag]
+        }));
+        setTagInput('');
+    };
+
+    const handleTagKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleAddTag();
+        }
+    };
+
+    const handleRemoveTag = (tagToRemove) => {
+        setFormData(prev => ({
+            ...prev,
+            tags: prev.tags.filter(tag => tag !== tagToRemove)
+        }));
+    };
+
+    // --- SUBTASK HANDLERS ---
+
     const handleAddSubtask = async (e) => {
         e.preventDefault();
         console.log('Form submitted'); // Check if this logs
@@ -236,15 +261,8 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                 }),
             });
 
-            console.log('Response status:', response.status);
+            if (!response.ok) throw new Error('Failed to add subtask');
             const responseData = await response.json();
-            console.log('Response data:', responseData);
-
-
-            if (!response.ok) {
-                throw new Error('Failed to add subtask');
-            }
-
             setSubtasks(prev => [...prev, responseData]);
             setNewSubtask('');
         } catch (error) {
@@ -274,6 +292,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
             }
 
             const updatedSubtask = await response.json();
+
             setSubtasks(prev => prev.map(st =>
                 st.id === subtaskId ? {...st, ...updatedSubtask} : st
             ));
@@ -339,237 +358,290 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         }
     };
 
-    
-
-    const handleNavigateDocument = (docId) => {
-
-        navigate(`/documents/edit/${docId}`, { state: { taskId: task.id } });
-
-    };
-
-
-    /**
-     * Toggles the completion status of a subtask
-     * @param {Object} subtask - The subtask to update
-     */
     const toggleSubtaskStatus = (subtask) => {
         const newStatus = subtask.status === 'completed' ? 'todo' : 'completed';
         handleUpdateSubtask(subtask.id, {status: newStatus});
     };
 
+    const handleNavigateDocument = (docId) => {
+        navigate(`/documents/edit/${docId}`, {state: {taskId: task.id}});
+    };
+
+    // Calculate progress for fun
+    const completedCount = subtasks.filter(st => st.status === 'completed').length;
+    const progress = subtasks.length > 0 ? Math.round((completedCount / subtasks.length) * 100) : 0;
+
     if (!task) return null;
+
+    const isTagLimitReached = formData.tags.length >= MAX_TAGS;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <button className="close-btn" onClick={onClose}>[×]</button>
+            {/* Form acts as container */}
+            <form className="modal-content jira-layout" onSubmit={handleSubmit} onClick={e => e.stopPropagation()}>
+
+                {/* --- HEADER --- */}
                 <div className="modal-header">
-                    <h2>Edit Task</h2>
-                    <button
-                        className="createDocument-btn"
-                        onClick={() => {
-                            navigate('/documents/new', {
-                                state: {taskId: task.id}
-                            });
-                        }}
-                        title="Create Document"
-                    >
-                        📄
-                    </button>
+                    <div className="breadcrumbs">
+                        <span>TASK-{task.id || 'NEW'}</span>
+                    </div>
+                    {/* Simplified Close Button */}
+                    <div className="header-actions">
+                        <button type="button" className="close-cross-btn" onClick={onClose} title="Close">
+                            <svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
+                                <path
+                                    d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"
+                                    fill="currentColor"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Title</label>
-                        <input
-                            type="text"
-                            name="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                    <label for="epicId">Epic Category</label>
 
-                    <select 
-                    name="epicId" 
-                    id="epicId"
-                    value={formData.epicId}
-                    onChange={handleChange}
-                    >
-  <option value="">Bitte Epic auswählen</option>
+                {/* --- SCROLLABLE BODY --- */}
+                <div className="modal-body-scroll">
+                    <div className="jira-body-grid">
 
-  {epics.map((epic) => (
-    <option key={epic.id} value={epic.id}>
-      {epic.title}
-    </option>
-  ))}
-</select>
-</div>
-                    <div className="form-group">
-                        <label>Description</label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows="4"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Status</label>
-                        <select
-                            name="status"
-                            value={formData.status}
-                            onChange={handleChange}
-                        >
-                            <option value="todo">To Do</option>
-                            <option value="inProgress">In Progress</option>
-                            <option value="test">In Test</option>
-                            <option value="done">Done</option>
-                        </select>
-                    </div>
-                    
-                    <div className="form-group">
-  <label>Documents</label>
-  <div className="documents-list">
-    <ul>
-      {documents.map((doc) => (
-        <li key={doc.id} className="document-item">
-          <button
-            className="btn btn-link document-title" // optional Styling
-            onClick={() => handleNavigateDocument(doc.id)}
-            style={{ padding: 0, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}
-          >
-            {doc.title || "Untitled Document"}
-          </button>
-        </li>
-      ))}
-    </ul>
-  </div>
-</div>
-
-
-                    
-                    <div className="form-group">
-                        <label>Subtasks</label>
-                        <div className="subtasks-list">
-                            <ul>
-                                {subtasks.map((subtask) => (
-                                    <li key={subtask.id} className="subtask-item">
-                                        <div className="subtask-header" onClick={() => handleSubtaskClick(subtask)}>
-                                            <input
-                                                type="checkbox"
-                                                checked={subtask.status === 'completed'}
-                                                onChange={() => toggleSubtaskStatus(subtask)}
-                                                onClick={(e) => e.stopPropagation()}
-                                            />
-                                            <span
-                                                className={`subtask-title ${subtask.status === 'completed' ? 'completed' : ''}`}>
-                                                {subtask.title}
-                                            </span>
-                                            <button
-                                                className="btn btn-sm btn-link text-danger ms-auto p-0"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeleteSubtask(subtask.id);
-                                                }}
-                                                title="Delete subtask"
-                                            >
-                                                🗑️
-                                            </button>
-                                        </div>
-                                        {editingSubtaskId === subtask.id && (
-                                            <div className="subtask-description">
-                                                <textarea
-                                                    className="form-control"
-                                                    value={editingDescription}
-                                                    onChange={(e) => setEditingDescription(e.target.value)}
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    placeholder="Add a description..."
-                                                />
-                                                <div className="mt-2">
-                                                    <button
-                                                        className="btn btn-sm btn-primary me-2"
-                                                        onClick={(e) => handleDescriptionSave(e, subtask.id)}
-                                                        title="Save Description to current subtask"
-                                                    >
-                                                        Save
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-sm btn-secondary"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setEditingSubtaskId(null);
-                                                            setEditingDescription('');
-                                                        }}
-                                                        title="Cancel editing current subtask"
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                            <div className="add-subtask-form">
+                        {/* LEFT COLUMN */}
+                        <div className="jira-main-col">
+                            {/* Title */}
+                            <div className="field-group title-group">
                                 <input
                                     type="text"
-                                    value={newSubtask}
-                                    onChange={(e) => setNewSubtask(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            handleAddSubtask(e).catch(error => {
-                                                console.error('Error adding subtask:', error);
-                                            });
-                                        }
-                                    }}
-                                    placeholder="Add a subtask..."
-                                    className="subtask-input"
+                                    name="title"
+                                    className="jira-title-input"
+                                    value={formData.title}
+                                    onChange={handleChange}
+                                    placeholder="Task Title"
+                                    required
                                 />
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-sm"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        handleAddSubtask(e);
-                                    }}
-                                    disabled={!newSubtask.trim()}
-                                    title="Add subtask to current task"
+                            </div>
+
+                            {/* Description */}
+                            <div className="field-group">
+                                <label className="jira-label">Description</label>
+                                <textarea
+                                    name="description"
+                                    className="jira-textarea"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    rows="4"
+                                    placeholder="Add a description..."
+                                />
+                            </div>
+
+                            {/* Subtasks */}
+                            <div className="field-group">
+                                <div className="section-header">
+                                    <label className="jira-label">Subtasks</label>
+                                    {subtasks.length > 0 && (
+                                        <span className="progress-pill">{progress}% done</span>
+                                    )}
+                                </div>
+
+                                {subtasks.length > 0 && (
+                                    <div className="progress-bar-container">
+                                        <div className="progress-bar-fill" style={{width: `${progress}%`}}></div>
+                                    </div>
+                                )}
+
+                                <div className="subtasks-list">
+                                    <ul>
+                                        {subtasks.map((subtask) => (
+                                            <li key={subtask.id} className="subtask-item">
+                                                <div className="subtask-row"
+                                                     onClick={() => handleSubtaskClick(subtask)}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={subtask.status === 'completed'}
+                                                        onChange={() => toggleSubtaskStatus(subtask)}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="jira-checkbox"
+                                                    />
+                                                    <span
+                                                        className={`subtask-title ${subtask.status === 'completed' ? 'completed' : ''}`}>
+                                                        {subtask.title}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        className="icon-btn delete-subtask-btn"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteSubtask(subtask.id);
+                                                        }}
+                                                    >
+                                                        🗑️
+                                                    </button>
+                                                </div>
+
+                                                {editingSubtaskId === subtask.id && (
+                                                    <div className="subtask-edit-area">
+                                                        <textarea
+                                                            value={editingDescription}
+                                                            onChange={(e) => setEditingDescription(e.target.value)}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            placeholder="Add notes..."
+                                                            autoFocus
+                                                        />
+                                                        <div className="subtask-actions">
+                                                            <button type="button" className="btn btn-primary btn-xs"
+                                                                    onClick={(e) => handleDescriptionSave(e, subtask.id)}>Save
+                                                            </button>
+                                                            <button type="button" className="btn btn-ghost btn-xs"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setEditingSubtaskId(null);
+                                                                    }}>Cancel
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <div className="add-subtask-row">
+                                        <input
+                                            type="text"
+                                            value={newSubtask}
+                                            onChange={(e) => setNewSubtask(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    handleAddSubtask(e);
+                                                }
+                                            }}
+                                            placeholder="+ Create subtask"
+                                            className="jira-ghost-input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Documents */}
+                            <div className="field-group">
+                                <div className="section-header">
+                                    <label className="jira-label">Linked Documents</label>
+                                    <button
+                                        type="button"
+                                        className="icon-btn add-doc-btn"
+                                        onClick={() => navigate('/documents/new', {state: {taskId: task.id}})}
+                                        title="Create Document"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                                <div className="documents-list">
+                                    {documents.length === 0 ? (
+                                        <div className="empty-state">No documents linked</div>
+                                    ) : (
+                                        <ul>
+                                            {documents.map((doc) => (
+                                                <li key={doc.id} className="document-item">
+                                                    <span className="doc-icon">📄</span>
+                                                    <button
+                                                        type="button"
+                                                        className="document-link"
+                                                        onClick={() => handleNavigateDocument(doc.id)}
+                                                    >
+                                                        {doc.title || "Untitled Document"}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT COLUMN (SIDEBAR) */}
+                        <div className="jira-sidebar">
+                            <div className="sidebar-group">
+                                <label className="jira-label-uppercase">Status</label>
+                                <select
+                                    name="status"
+                                    value={formData.status}
+                                    onChange={handleChange}
+                                    className={`jira-select status-${formData.status}`}
                                 >
-                                    Add
-                                </button>
+                                    <option value="todo">To Do</option>
+                                    <option value="inProgress">In Progress</option>
+                                    <option value="test">In Test</option>
+                                    <option value="done">Done</option>
+                                </select>
+                            </div>
+
+                            <div className="sidebar-group">
+                                <label className="jira-label-uppercase">Tags</label>
+                                <div className="tags-container">
+                                    {formData.tags.map((tag, index) => (
+                                        <span key={index} className="tag-pill">
+                                            {tag}
+                                            <button type="button" onClick={() => handleRemoveTag(tag)}
+                                                    className="tag-remove">×</button>
+                                        </span>
+                                    ))}
+                                    {!isTagLimitReached && (
+                                        <input
+                                            type="text"
+                                            value={tagInput}
+                                            onChange={(e) => setTagInput(e.target.value)}
+                                            onKeyDown={handleTagKeyDown}
+                                            placeholder="Add tag..."
+                                            className="tag-input-ghost"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                            <div className="sidebar-group">
+                                <div className="form-group">
+                                    <label for="epicId">Epic Category</label>
+
+                                    <select
+                                        name="epicId"
+                                        id="epicId"
+                                        value={formData.epicId}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Bitte Epic auswählen</option>
+
+                                        {epics.map((epic) => (
+                                            <option key={epic.id} value={epic.id}>
+                                                {epic.title}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="sidebar-group read-only-meta">
+                                <div className="meta-item">
+                                    <span className="meta-label">Reporter</span>
+                                    <span className="meta-value">Me</span>
+                                </div>
+                                <div className="meta-item">
+                                    <span className="meta-label">Created</span>
+                                    <span className="meta-value">Just now</span>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div className="modal-actions">
-                        <button
-                            type="button"
-                            className="btn btn-delete"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete();
-                            }}
-                        >
-                            Delete Task
-                        </button>
-                        <div>
-                            <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={onClose}
-                            >
-                                Cancel
-                            </button>
-                            <button type="submit" className="btn btn-primary">
-                                Save Changes
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                {/* --- FOOTER (ALWAYS VISIBLE) --- */}
+                <div className="modal-footer">
+                    <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete();
+                        }}
+                    >
+                        Delete
+                    </button>
+                    <button type="submit" className="btn btn-primary">Save Changes</button>
+                </div>
+
+            </form>
         </div>
     );
 };
