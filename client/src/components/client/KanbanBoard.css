@@ -1,41 +1,46 @@
-/* Kanban Board style */
+/* ============================
+   Kanban Board
+   ============================ */
 .kanban-board {
     display: flex; /* Uses flex layout for horizontal alignment of columns */
-    gap: 16px; /* Reduced gap between columns */
-    padding: 16px; /* Inner spacing around the board */
-    overflow-x: auto; /* Allows horizontal scrolling if content overflows */
-    height: calc(100vh - 200px); /* Sets height relative to viewport height minus 200px */
-    min-height: 500px; /* Minimum height of the board */
-    align-items: flex-start; /* Align columns to the top */
+    gap: 16px; /* Gap between columns */
+    padding: 16px; /* Padding inside the board */
+    overflow-x: auto; /* Enables horizontal scrolling */
+    height: calc(100vh - 200px); /* Adjusts height to fit viewport */
+    min-height: 500px; /* Minimum height for the board */
+    align-items: flex-start;
+    background-color: var(--bg-app);
+    transition: background-color 0.3s ease;
 }
 
 .kanban-column {
-    background-color: #ffffff; /* Background color of each column */
-    border-radius: 8px; /* Rounded corners for columns */
-    border: dashed rgb(0, 0, 0, 0.5);
-    padding: 16px; /* Inner spacing inside each column */
-    width: 280px; /* Fixed width for all columns */
-    flex: 0 0 280px; /* Don't grow, don't shrink, fixed width */
-    max-height: 100%; /* Max height equals container height */
-    display: flex; /* Uses flex layout for column content */
-    flex-direction: column; /* Stacks children vertically */
-    overflow: hidden; /* Prevents content from overflowing */
+    background-color: var(--bg-white); /* Background color of each column */
+    border-radius: var(--radius); /* Rounded corners for columns */
+    border: 1px dashed var(--border-light); /* Border style for columns */
+    padding: 16px; /* Padding inside columns */
+    width: 280px; /* Fixed width for columns */
+    flex: 0 0 280px; /* Prevent columns from shrinking */
+    max-height: 100%; /* Ensure columns don't overflow */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .kanban-column-header {
-    display: flex; /* Flex layout for header content */
-    justify-content: space-between; /* Space between title and button */
-    align-items: center; /* Vertically align items */
-    margin-bottom: 16px; /* Space below header */
-    padding-bottom: 12px; /* Inner bottom padding of header */
-    border-bottom: 2px solid #e2e8f0; /* Bottom border for separation */
+    display: flex;  /* Flex layout for header content */
+    justify-content: space-between; /* Space between header elements */
+    align-items: center; /* Center alignment of header elements */
+    margin-bottom: 16px; /* Bottom margin for spacing */
+    padding-bottom: 12px; /* Padding at the bottom of the header */
+    border-bottom: 1px solid var(--border-light); /* Bottom border for visual separation */
 }
 
 .kanban-column-header h3 {
     margin: 0; /* Remove default margin */
-    color: black; /* Text color */
-    font-size: 16px; /* Font size  */
-    font-weight: 600; /* Bold font weight */
+    color: var(--text-dark); /* Text color */
+    font-size: 16px; /* Font size */
+    font-weight: 600; /* Font weight */
 }
 
 .add-card-btn {
@@ -73,12 +78,12 @@
 }
 
 .kanban-cards::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Track background */
+    background: var(--bg-white); /* Track background */
     border-radius: 3px; /* Rounded edges */
 }
 
 .kanban-cards::-webkit-scrollbar-thumb {
-    background: #cbd5e0; /* Scrollbar thumb color */
+    background: var(--border-light); /* Scrollbar thumb color */
     border-radius: 3px; /* Rounded edges */
 }
 
@@ -87,16 +92,16 @@
 }
 
 .kanban-card {
-    background: white; /* Card background */
-    border-radius: 6px; /* Rounded corners for cards */
-    border: dashed rgb(0, 0, 0, 0.2);
-    padding: 12px; /* Inner spacing */
-    margin-bottom: 12px; /* Space below each card */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: transform 0.2s, box-shadow 0.2s;
-    word-wrap: break-word; /* Ensure long words don't overflow */
-    overflow: hidden; /* Hide any content that overflows */
+    background: var(--bg-white); /* Card background */
+    border-radius: var(--radius); /* Rounded corners */
+    border: 1px dashed var(--border-light); /* Border style */
+    padding: 12px; /* Padding inside card */
+    margin-bottom: 12px; /* Bottom margin */
+    box-shadow: var(--shadow-sm); /* Shadow effect */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    word-wrap: break-word;
+    overflow: hidden;
 }
 
 .kanban-card--bug {
@@ -114,7 +119,7 @@
 .kanban-card:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Enhanced shadow on hover */
-    border: solid rgb(0, 0, 0, 0.5); /* Show border on hover with some opacity */
+    border: solid var(--border-light); /* Show border on hover with some opacity */
     transform: translateY(-2px); /* Slight lift effect */
     cursor: pointer; /* Pointer cursor on hover */
 }
@@ -127,17 +132,17 @@
 
 .kanban-card h4 {
     margin: 0 0 8px 0; /* Remove top margin, space below heading  */
-    color: #2d3748;
+    color: var(--text-dark);
     font-size: 14px;
     white-space: nowrap; /* Prevent text wrapping */
     overflow: hidden; /* Hide overflow */
-    text-overflow: ellipsis; /* Add ellipsis for overflow */
-    width: 100%; /* Ensure the container has a defined width */
+    text-overflow: ellipsis; /* Ellipsis for overflow */
+    width: 100%;
 }
 
 .kanban-card .description {
     margin: 0 0 8px 0;
-    color: #4a5568;
+    color: var(--text-muted);
     font-size: 13px;
     line-height: 1.4;
     max-height: 5.6em; /* 4 lines of text (1.4 line-height * 4 lines) */
@@ -155,9 +160,9 @@
     height: 1.2em;
     background: linear-gradient(to bottom,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.9) 100%
+    var(--bg-white, rgba(255, 255, 255, 0.9)) 100%
     );
-    opacity: 0; /* Hidden by default */
+    opacity: 0;
     transition: opacity 0.2s ease;
 }
 
@@ -172,23 +177,23 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background: white;
+    background: var(--bg-white);
     padding-left: 4px;
     z-index: 1;
 }
 
 .card-footer {
-    display: flex; /* Flex layout for footer */
-    justify-content: space-between; /* Space between elements */
-    align-items: center; /* Vertical alignment */
-    margin-top: 12px;
-    padding-top: 8px;
-    border-top: 1px solid #edf2f7; /* Top border line */
+    display: flex;  /* Flex layout for footer */
+    justify-content: space-between; /* Space between footer elements */
+    align-items: center; /* Center alignment of footer elements */
+    margin-top: 12px; /* Top margin for spacing */
+    padding-top: 8px; /* Padding at the top of the footer */
+    border-top: 1px solid var(--border-light); /* Top border for visual separation */
 }
 
 .subtask-badge {
-    background-color: #edf2f7;
-    color: #4a5568;
+    background-color: var(--bg-muted);
+    color: var(--text-muted);
     padding: 2px 8px;
     border-radius: 12px;
     font-size: 12px;

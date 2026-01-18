@@ -365,12 +365,18 @@ div.task-item .document-item-documentTree {
     font-weight: 600;
     border: none;
     outline: none;
-    padding: 8px 0; /* 0.5rem 0 */
+    padding: 8px 2px; /* 0.5rem 0 */
 }
 
 /* Placeholder text color */
 .title-input::placeholder {
     color: var(--text-muted);
+}
+
+.title-placeholder {
+    color:var(--title-color);
+    margin:10px 0;
+    font-size:18px;
 }
 
 /* Editor content styles */

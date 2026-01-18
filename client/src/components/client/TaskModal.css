@@ -3,8 +3,9 @@
 
 /* ===== Variables & Reset ===== */
 :root {
+    /* Light theme (default) */
     --jira-bg: #ffffff;
-    --jira-bg-hover: #ebecf0;
+    --jira-bg-hover: #f4f5f7;
     --jira-border: #dfe1e6;
     --jira-text-main: #172b4d;
     --jira-text-secondary: #5e6c84;
@@ -17,6 +18,17 @@
     
     /* Modern System Font Stack */
     --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+    --jira-bg: #2f3336;
+    --jira-bg-hover: #3b3f45;
+    --jira-border: #4c5154;
+    --jira-text-main: #ffffff;
+    --jira-text-secondary: #959595;
+    --jira-blue: #66d9ef;
+    --jira-blue-hover: #8dd3f5;
 }
 
 * {
@@ -35,12 +47,14 @@ body, input, select, textarea, button {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(9, 30, 66, 0.54);
+    background-color: rgba(9, 30, 66, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
     padding: 40px 20px;
+    backdrop-filter: blur(4px);
+    transition: background-color 0.3s ease;
 }
 
 .modal-content.jira-layout {
@@ -51,12 +65,13 @@ body, input, select, textarea, button {
     max-height: 900px;
     
     /* CHANGE: Increased from 3px to 16px for a modern round look */
-    border-radius: 16px; 
+    border-radius: 16px;
     
     box-shadow: 0 8px 16px -4px rgba(9, 30, 66, 0.25), 0 0 0 1px rgba(9, 30, 66, 0.08);
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Important: keeps content inside the rounded corners */
+    overflow: hidden;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ===== Header ===== */
@@ -66,6 +81,9 @@ body, input, select, textarea, button {
     justify-content: space-between;
     align-items: flex-start;
     flex-shrink: 0;
+    background-color: var(--jira-bg);
+    border-bottom: 1px solid var(--jira-border);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .breadcrumbs span {
@@ -126,20 +144,25 @@ body, input, select, textarea, button {
 /* Grid Layout */
 .jira-body-grid {
     display: flex;
+    background-color: var(--jira-bg);
+    transition: background-color 0.3s ease;
 }
 
 .jira-main-col {
     flex: 1;
-    padding-right: 40px;
+    padding: 20px 40px 20px 30px;
+    border-right: 1px solid var(--jira-border);
+    transition: border-color 0.3s ease;
 }
 
 .jira-sidebar {
     width: 300px;
-    padding-left: 20px;
-    padding-top: 10px;
+    padding: 20px 30px 20px 20px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    background-color: var(--jira-bg);
+    transition: background-color 0.3s ease;
 }
 
 /* ===== Typography & Inputs (Left Col) ===== */
@@ -153,6 +176,7 @@ body, input, select, textarea, button {
     font-weight: 600;
     color: var(--jira-text-main);
     margin-bottom: 8px;
+    transition: color 0.3s ease;
 }
 
 /* Title Input */
@@ -166,7 +190,7 @@ body, input, select, textarea, button {
     padding: 8px 6px;
     margin-left: -8px;
     background: transparent;
-    transition: background 0.2s, border-color 0.2s;
+    transition: all 0.3s ease;
 }
 
 .jira-title-input:hover {
@@ -182,25 +206,28 @@ body, input, select, textarea, button {
 /* Description Textarea */
 .jira-textarea {
     width: 100%;
-    border: 1px solid transparent;
+    border: 1px solid var(--jira-border);
     border-radius: 3px;
-    padding: 8px;
+    padding: 12px;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
     color: var(--jira-text-main);
+    background-color: var(--jira-bg);
     resize: vertical;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+    min-height: 100px;
 }
 
 .jira-textarea:hover {
     background-color: var(--jira-bg-hover);
+    border-color: var(--jira-blue);
 }
 
 .jira-textarea:focus {
-    background-color: #fff;
-    border: 1px solid #4c9aff;
+    background-color: var(--jira-bg);
+    border-color: var(--jira-blue);
     outline: none;
-    box-shadow: 0 0 0 1px #4c9aff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
 }
 
 /* ===== Subtasks Section ===== */
@@ -341,15 +368,22 @@ body, input, select, textarea, button {
     display: flex;
     align-items: center;
     padding: 6px 8px;
-    border: 1px solid #dfe1e6;
-    border-radius: 3px;
+    border: 1px solid var(--jira-border);
+    border-radius: var(--radius);
     margin-bottom: 6px;
-    background: #fff;
+    background: var(--jira-bg);
+    transition: all 0.2s ease;
+}
+
+.document-item:hover {
+    background: var(--jira-bg-hover);
+    border-color: var(--jira-blue);
 }
 
 .doc-icon {
     margin-right: 8px;
     font-size: 16px;
+    color: var(--jira-text-secondary);
 }
 
 .document-link {
@@ -362,6 +396,7 @@ body, input, select, textarea, button {
 }
 
 .document-link:hover {
+    color: var(--jira-blue-hover);
     text-decoration: underline;
 }
 

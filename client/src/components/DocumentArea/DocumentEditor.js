@@ -130,6 +130,7 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
 
         <div className="editor-container">
             <div className="editor-header">
+                <div className="title">Title: </div>
                 <input
                     type="text"
                     value={title}
