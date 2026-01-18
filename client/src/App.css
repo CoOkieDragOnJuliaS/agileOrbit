@@ -77,6 +77,26 @@ button, .btn {
   background-color: var(--primary-light);
 }
 
+.btn-danger {
+  background-color: var(--jira-red-bg);
+  color: var(--jira-red);
+}
+.btn-danger:hover {
+  background-color: var(--jira-red-hover);
+}
+
+.btn-ghost {
+  background: none;
+  color: var(--jira-text-main);
+}
+.btn-ghost:hover { background-color: rgba(9, 30, 66, 0.08); }
+
+.btn-xs {
+  padding: 0 8px;
+  height: 24px;
+  font-size: 12px;
+}
+
 /* Text-Button (Links) */
 .btn-link {
   background: none;
@@ -107,8 +127,7 @@ input:focus {
 }
 
 /* --- 5. ÜBERSCHRIFTEN --- */
-h1, h2, h3 {
+h1, h2, h3, h4 {
   color: var(--text-main);
-  font-weight: 700;
-  margin-bottom: 10px;
+  font-weight: 600;
 }
