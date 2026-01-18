@@ -3,6 +3,26 @@ import { NavLink, Outlet } from 'react-router-dom';
 import './Sidebar.css';
 
 const AgileOrbitSidebar = () => {
+  const getPreferredTheme = () => {
+    const saved = window.localStorage.getItem('theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+
+    const prefersDark =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersDark ? 'dark' : 'light';
+  };
+
+  const applyTheme = (theme) => {
+    document.documentElement.setAttribute('data-theme', theme);
+    window.localStorage.setItem('theme', theme);
+  };
+
+  const [theme, setTheme] = React.useState(() => getPreferredTheme());
+
+  React.useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
+
   return (
     <div className="app-layout" style={{ display: 'flex', height: '100vh', width: '100vw' }}>
       
@@ -11,6 +31,16 @@ const AgileOrbitSidebar = () => {
           <div className="brand-icon">A</div>
           <span className="brand-name">AgileOrbit</span>
         </div>
+
+        <button
+          type="button"
+          className="sidebar-theme-toggle"
+          onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        >
+          {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+        </button>
 
         <nav className="sidebar-nav">
           <NavLink to="/dashboard" className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"}>
@@ -37,7 +67,7 @@ const AgileOrbitSidebar = () => {
         </div>
       </aside>
 
-      <main className="content-shell" style={{ flexGrow: 1, overflowY: 'auto', backgroundColor: '#f9f9f9' }}>
+      <main className="content-shell" style={{ flexGrow: 1, overflowY: 'auto', backgroundColor: 'var(--bg-app)' }}>
         <Outlet /> 
       </main>
     </div>

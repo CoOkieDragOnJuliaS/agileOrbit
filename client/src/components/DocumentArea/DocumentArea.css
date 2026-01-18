@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: column;
     height: 100vh; /* 100% of viewport height */
-    background-color: #f9fafb;
+    background-color: var(--bg-app);
     overflow: hidden;
 }
 
@@ -13,18 +13,19 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 24px; /* 0.75rem 1.5rem */
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-white);
+    box-shadow: var(--shadow-card);
     z-index: 10;
     position: sticky;
     top: 0;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .document-header h1 {
     margin: 0;
     font-size: 24px; /* 1.5rem */
     font-weight: 600;
-    color: #1a202c;
+    color: var(--text-dark);
 }
 
 /* Container for header action buttons */
@@ -36,11 +37,13 @@
 
 /* Sidebar styles */
 .document-sidebar {
-    padding: 10px; /* 0.625rem */
-    width: 350px; /* Increased from 250px to 350px */
-    min-width: 350px; /* Ensure minimum width is respected */
-    border-right: 1px solid #e2e8f0;
+    padding: 10px;
+    width: 350px;
+    min-width: 350px;
+    border-right: 1px solid var(--border-light);
+    background-color: var(--bg-white);
     overflow-y: auto;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Document tree */
@@ -49,68 +52,81 @@
     overflow-y: auto;
     height: 100%;
     list-style: none;
+    background-color: var(--bg-white);
+    border-radius: var(--radius);
+    margin: 4px;
+    padding: 8px;
 }
+
 /* Section Headers */
 .document-tree h3 {
     font-size: 1rem;
     font-weight: 600;
-    color: #4f46e5;
+    color: var(--primary-purple);
     padding: 8px 16px 8px 24px;
     margin: 8px 0 4px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-light);
     position: relative;
 }
+
 /* Epic Items */
 .epic-item {
     margin: 2px 0;
     position: relative;
     padding-left: 12px;
 }
+
 .epic-item::before {
     content: "•";
     position: absolute;
     left: 0;
-    color: #6b46c1;
+    color: var(--primary-purple);
     font-size: 1.5em;
     line-height: 1;
     top: 4px;
 }
+
 .epic-item > h4 {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #1a202c;
+    color: var(--text-dark);
     padding: 6px 12px 6px 24px;
     margin: 4px 0;
-    background-color: #f8fafc;
-    border-radius: 4px;
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
     position: relative;
     cursor: default;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
+
 /* Task Items */
 li.task-item{
     margin: 4px 0 4px 24px;
     position: relative;
     padding-left: 24px;
 }
+
 li.task-item::before {
     content: "↳";
     position: absolute;
     left: 0;
-    color: #718096;
+    color: var(--text-muted);
     font-size: 1.2em;
 }
+
 .task-title {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #2d3748;
+    color: var(--text-dark);
     padding: 4px 8px;
     margin: 2px 0;
     cursor: default;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
     display: block;
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-light);
 }
 
 /* Document List */
@@ -120,6 +136,7 @@ li.task-item::before {
     list-style: none;
     position: relative;
 }
+
 .document-list::before {
     content: "";
     position: absolute;
@@ -128,24 +145,29 @@ li.task-item::before {
     bottom: 0;
     width: 20px;
 }
+
 .document-item {
-    padding: 4px 8px 4px 24px;
+    padding: 6px 8px 6px 24px;
     margin: 2px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 0.875rem;
-    color: #4a5568;
+    color: var(--text-main);
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
     list-style-type: none;
+    border-radius: var(--radius);
+    background-color: var(--bg-white);
+    border: 1px solid transparent;
 }
+
 .document-item::before {
     content: "📄";
     position: absolute;
     left: 6px;
-    color: #718096;
+    color: var(--text-muted);
     font-size: 0.9em;
     transition: transform 0.2s;
 }
@@ -157,30 +179,39 @@ li.task-item::before {
     text-overflow: ellipsis;
     margin-right: 10px;
 }
+
 .document-item-date {
     font-size: 0.8em;
-    color: #6b7280;
+    color: var(--text-muted);
     white-space: nowrap;
 }
 
 .document-item:hover {
-    background-color: #f1f5f9;
-    color: #4f46e5;
+    background-color: var(--primary-light);
+    color: var(--primary-purple);
+    border-color: var(--primary-purple);
+    transform: translateX(2px);
 }
+
 .document-item:hover::before {
     transform: translateX(2px);
 }
+
 .document-item.active {
-    background-color: #e0e7ff;
-    color: #4f46e5;
+    background-color: var(--primary-light);
+    color: var(--primary-purple);
     font-weight: 500;
+    border-left: 3px solid var(--primary-purple);
+    padding-left: 21px; /* 24px - 3px border */
 }
+
 /* Active state for tasks */
 .task-item.active .task-title {
-    background-color: #e0e7ff;
-    color: #4f46e5;
+    background-color: var(--primary-light);
+    color: var(--primary-purple);
     font-weight: 500;
 }
+
 /* Nested Lists */
 .task-list {
     margin: 0;
@@ -202,7 +233,7 @@ li.task-item::before {
     flex: 1;
     padding: 24px; /* 1.5rem */
     overflow-y: auto;
-    background-color: #f9f9f9;
+    background-color: var(--bg-app);
 }
 
 /* Placeholder for empty state */
@@ -211,13 +242,13 @@ li.task-item::before {
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: #718096;
+    color: var(--text-muted);
     font-size: 18px; /* 1.125rem */
 }
 
 /* Editor styles */
 .editor-container {
-    background: white;
+    background: var(--bg-white);
     border-radius: 8px; /* 0.5rem */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     height: 100%;
@@ -227,8 +258,10 @@ li.task-item::before {
 
 /* Editor header section */
 .editor-header {
-    padding: 16px 24px; /* 1rem 1.5rem */
-    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-light);
+    background-color: var(--bg-white);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Title input field */
@@ -243,7 +276,7 @@ li.task-item::before {
 
 /* Placeholder text color */
 .title-input::placeholder {
-    color: #a0aec0;
+    color: var(--text-muted);
 }
 
 /* Editor content area */
@@ -256,7 +289,7 @@ li.task-item::before {
 /* Action buttons container */
 .editor-actions {
     padding: 16px 24px; /* 1rem 1.5rem */
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: flex-end;
     gap: 12px; /* 0.75rem */
@@ -277,7 +310,7 @@ li.task-item::before {
         width: 100%;
         height: 40vh; /* 40% of viewport height */
         border-right: none;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--border-light);
     }
 
     .document-header {

@@ -17,14 +17,14 @@
   align-items: center;
   gap: 12px;
   padding: 0 12px;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .brand-icon {
   width: 32px;
   height: 32px;
   background-color: var(--primary-purple);
-  border-radius: 8px;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,6 +36,29 @@
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-dark);
+}
+
+/* Theme Toggle */
+.sidebar-theme-toggle {
+  width: 100%;
+  margin: 0 0 16px 0;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-light);
+  background-color: transparent;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-theme-toggle:hover {
+  background-color: var(--bg-app);
+  border-color: var(--primary-purple);
 }
 
 /* Navigations-Links */

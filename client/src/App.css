@@ -23,6 +23,25 @@
   --radius: 8px;                /* Einheitliche Abrundung */
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --primary-purple: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --primary-light: rgba(139, 92, 246, 0.18);
+
+  --bg-app: #0b1220;
+  --bg-white: #0f172a;
+
+  --text-main: #e5e7eb;
+  --text-dark: #f3f4f6;
+  --text-muted: #9ca3af;
+
+  --border-light: #243244;
+  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --radius: 8px;                /* Einheitliche Abrundung */
+}
+
 /* --- 2. GLOBAL RESET & FONT --- */
 * {
   box-sizing: border-box;
