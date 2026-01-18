@@ -44,7 +44,8 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         title: task?.title || '',
         description: task?.description || '',
         status: task?.status || 'todo',
-        tags: task?.tags || []
+        tags: task?.tags || [],
+        epicId: task?.epicId || []
     });
 
     const [tagInput, setTagInput] = useState('');
@@ -54,6 +55,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
     const [editingSubtaskId, setEditingSubtaskId] = useState(null);
     const [editingDescription, setEditingDescription] = useState('');
     const [documents, setDocuments] = useState([]);
+    const [epics, setEpics] = useState([]);
 
     // --- EFFECTS ---
 
@@ -593,9 +595,10 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                             </div>
                             <div className="sidebar-group">
                                 <div className="form-group">
-                                    <label for="epicId">Epic Category</label>
+                                    <label className="jira-label-uppercase">Epic Category</label>
 
                                     <select
+                                        className="jira-select"
                                         name="epicId"
                                         id="epicId"
                                         value={formData.epicId}
@@ -636,7 +639,7 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                             onDelete();
                         }}
                     >
-                        Delete
+                    Delete
                     </button>
                     <button type="submit" className="btn btn-primary">Save Changes</button>
                 </div>
