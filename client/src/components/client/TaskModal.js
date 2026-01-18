@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import './TaskModal.css';
 
+
 /**
  * TaskModal Component
  * A modal dialog for viewing and editing task details and subtasks.
@@ -45,7 +46,9 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         description: task?.description || '',
         status: task?.status || 'todo',
         tags: task?.tags || [],
-        epicId: task?.epicId || []
+        epicId: task?.epicId || [],
+        assignee: task?.assignee || [],
+        creator: task?.creator || ''
     });
 
     const [tagInput, setTagInput] = useState('');
@@ -56,6 +59,9 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
     const [editingDescription, setEditingDescription] = useState('');
     const [documents, setDocuments] = useState([]);
     const [epics, setEpics] = useState([]);
+    const [assignee, setassignee] = useState([]);
+    
+
 
     // --- EFFECTS ---
 
@@ -81,8 +87,10 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
             description: task?.description || '',
             status: task?.status || 'todo',
             epicId: task?.epicId || '',
-            tags: task?.tags || []
-        });
+            tags: task?.tags || [],
+            assignee: task?.assignee || [],
+            creator: task?.creator || ''
+        }, [task]);
 
         const fetchSubtasks = async () => {
             if (!task?.id) return;
@@ -183,10 +191,47 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                 //Setting empty array to prevent frontend issues
                 setEpics([]);
             }
+
+        
         };
+
+        const fetchassignee = async () => {
+            if (!task?.id) return;
+
+            try {
+                const response = await fetch(`/api/auth/assignee/`, {
+                    method: 'GET',
+                    credentials: 'include', // Include cookies for authentication
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                //handle if there are no subtasks yet, set empty array
+                if (response.status === 404) {
+                    //No subtasks found
+                    setassignee([]);
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to fetch documents');
+                }
+
+                const DocumentData = await response.json();
+                setassignee(DocumentData);
+            } catch (error) {
+                console.error('Error fetching subtasks:', error);
+                //Setting empty array to prevent frontend issues
+                setassignee([]);
+            }
+        }
 
         fetchEpics();
         fetchDocuments();
+        fetchassignee();
+
     }, [task]);
 
 
@@ -617,13 +662,30 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
 
                             <div className="sidebar-group read-only-meta">
                                 <div className="meta-item">
-                                    <span className="meta-label">Reporter</span>
-                                    <span className="meta-value">Me</span>
+                                    <span className="meta-label">creator</span>
+                                    <span className="meta-value">{formData.creator}</span>
                                 </div>
-                                <div className="meta-item">
-                                    <span className="meta-label">Created</span>
-                                    <span className="meta-value">Just now</span>
+                                <div className="sidebar-group">
+                                <div className="form-group">
+                                    <label className="jira-label-uppercase">assignee</label>
+
+                                    <select
+                                        className="jira-select"
+                                        name="assignee"
+                                        id="assignee"
+                                        value={formData.assignee}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Bitte Zuständigen auswählen</option>
+
+                                        {assignee.map((assignee) => (
+                                            <option key={assignee.uid} value={assignee.uid}>
+                                                {assignee.email}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
+                            </div>
                             </div>
                         </div>
                     </div>

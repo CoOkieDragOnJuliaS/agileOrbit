@@ -9,7 +9,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './KanbanBoard.css';
 import TaskModal from './TaskModal';
 import { useLocation } from "react-router-dom";
-
+import { useAuth } from '../../contexts/AuthContext';
 
 
 
@@ -144,13 +144,17 @@ function KanbanBoard() {
      * @param {string} status - The status/column where the task should be created
      * Automatically refreshes the task list after creation
      */
+
+     const { currentUser } = useAuth();
+
     const createTask = async (status) => {
         try {
             const newTask = {
                 title: 'New Task',
                 description: 'Click to edit',
                 status,
-                boardID: 'default-board' // TODO: Replace with actual board ID from props or context
+                boardID: 'default-board', // TODO: Replace with actual board ID from props or context
+                creator: currentUser.email
             };
 
             console.log('Creating task with data:', newTask);
