@@ -169,10 +169,7 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
                     value={content}
                     onChange={(content) => {
                         setContent(content);
-                        // Only auto-save if document has an ID (existing document)
-                        if (documentId) {
-                            handleSave(content);
-                        }
+                        
                     }}
                     placeholder="Start writing your document..."
                 />
