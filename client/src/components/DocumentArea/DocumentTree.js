@@ -1,5 +1,7 @@
 import React, {useEffect, useState, useMemo, useCallback} from "react";
 import "./DocumentArea.css";
+import {useNavigate} from "react-router-dom";
+
 
 // Helper function to format date
 const formatDate = (timestamp) => {
@@ -67,6 +69,9 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    //Initializing navigation to another component with React
+    const navigate = useNavigate();
 
     // Memorize the document click handler
     const handleDocumentClick = useCallback((docId, e) => {
@@ -178,27 +183,39 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
                             <ul className="task-list">
                                 {epic.tasks.filter(task => task.documents && task.documents.length > 0)
                                     .map(task => (
-                                    <li key={`task-${task.id}`} className="task-item">
-                                        <div className="task-title">{task.title}</div>
-                                        <ul className="document-list-documentTree">
-                                            {task.documents && task.documents.map(doc => (
-                                                <li
-                                                    key={`doc-${doc.id}`}
-                                                    className={`document-item-documentTree ${doc.isActive ? 'active' : ''}`}
-                                                    onClick={(e) => handleDocumentClick(doc.id, e)}
-                                                    title={doc.title}
-                                                >
-                                                    <span className="document-item-content">{doc.title}</span>
-                                                    {doc.updatedAt && (
-                                                        <span className="document-item-date">
+                                        <li key={`task-${task.id}`} className="task-item">
+                                            <div className="task-title">
+                                                <span className="task-title-content">{task.title}</span>
+                                                <span className="task-title-button">
+                                                    <button
+                                                        type="button"
+                                                        className="icon-btn add-doc-btn"
+                                                        onClick={() => navigate('/documents/new', {state: {taskId: task.id}})}
+                                                        title="Create Document"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </span>
+                                            </div>
+                                            <ul className="document-list-documentTree">
+                                                {task.documents && task.documents.map(doc => (
+                                                    <li
+                                                        key={`doc-${doc.id}`}
+                                                        className={`document-item-documentTree ${doc.isActive ? 'active' : ''}`}
+                                                        onClick={(e) => handleDocumentClick(doc.id, e)}
+                                                        title={doc.title}
+                                                    >
+                                                        <span className="document-item-content">{doc.title}</span>
+                                                        {doc.updatedAt && (
+                                                            <span className="document-item-date">
                                                             {formatDate(doc.updatedAt)}
                                                         </span>
-                                                    )}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </li>
-                                ))}
+                                                        )}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </li>
+                                    ))}
                             </ul>
                         </div>
                     ))}
@@ -212,27 +229,38 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
                     processedFileTree.tasksWithoutEpic
                         .filter(task => task.documents && task.documents.length > 0)
                         .map(task => (
-                        <div key={`task-${task.id}`} className="task-item">
-                            <h4 className="task-title">{task.title}</h4>
-                            <ul className="document-list-documentTree">
-                                {task.documents && task.documents.map(doc => (
-                                    <li
-                                        key={`doc-${doc.id}`}
-                                        className={`document-item-documentTree ${doc.isActive ? 'active' : ''}`}
-                                        onClick={(e) => handleDocumentClick(doc.id, e)}
-                                        title={doc.title}
-                                    >
-                                        <span className="document-item-content">{doc.title}</span>
-                                        {doc.updatedAt && (
-                                            <span className="document-item-date">
+                            <div key={`task-${task.id}`} className="task-item">
+                                <h4 className="task-title"><span className="task-title-content">{task.title}</span>
+                                    <span className="task-title-button">
+                                        <button
+                                            type="button"
+                                            className="icon-btn add-doc-btn"
+                                            onClick={() => navigate('/documents/new', {state: {taskId: task.id}})}
+                                            title="Create Document"
+                                        >
+                                            +
+                                        </button>
+                                    </span>
+                                </h4>
+                                <ul className="document-list-documentTree">
+                                    {task.documents && task.documents.map(doc => (
+                                        <li
+                                            key={`doc-${doc.id}`}
+                                            className={`document-item-documentTree ${doc.isActive ? 'active' : ''}`}
+                                            onClick={(e) => handleDocumentClick(doc.id, e)}
+                                            title={doc.title}
+                                        >
+                                            <span className="document-item-content">{doc.title}</span>
+                                            {doc.updatedAt && (
+                                                <span className="document-item-date">
                                                 {formatDate(doc.updatedAt)}
                                             </span>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))
                 )}
             </div>
             {/* Standalone documents */}
