@@ -198,8 +198,8 @@ body, input, select, textarea, button {
 }
 
 .jira-title-input:focus {
-    background-color: #fff;
-    border-color: #4c9aff;
+    background-color: var(--jira-bg);
+    border-color: var(--jira-border);
     outline: none;
 }
 
@@ -327,7 +327,7 @@ body, input, select, textarea, button {
 
 .subtask-edit-area textarea {
     width: 100%;
-    border: 1px solid #dfe1e6;
+    border: var(--jira-border);
     border-radius: 3px;
     padding: 8px;
     font-size: 13px;
@@ -359,7 +359,7 @@ body, input, select, textarea, button {
 }
 
 .jira-ghost-input:focus {
-    background-color: #fff;
+    background-color: var(--jira-bg);
     outline: 2px solid #4c9aff;
 }
 
