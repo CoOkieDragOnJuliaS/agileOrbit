@@ -1,5 +1,62 @@
 import React, {useEffect, useState, useMemo, useCallback} from "react";
-import "./DocumentArea.css"
+import "./DocumentArea.css";
+
+// Helper function to format date
+const formatDate = (timestamp) => {
+    try {
+        if (!timestamp) return '';
+
+        // Debug log to see what we're working with
+        console.log('Formatting timestamp:', timestamp, 'Type:', typeof timestamp);
+
+        // Handle Firestore Timestamp with _seconds and _nanoseconds
+        if (timestamp._seconds) {
+            const date = new Date(timestamp._seconds * 1000 + (timestamp._nanoseconds || 0) / 1000000);
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Handle Firestore Timestamp objects with toDate() method
+        if (timestamp.toDate) {
+            const date = timestamp.toDate();
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Handle string timestamps
+        if (typeof timestamp === 'string') {
+            const date = new Date(timestamp);
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleDateString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+        }
+
+        // Handle Firestore Timestamp in seconds/nanoseconds format (without underscore)
+        if (timestamp.seconds) {
+            const date = new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000);
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        return ''; // Return empty if we can't parse the date
+    } catch (error) {
+        console.error('Error formatting date:', error, timestamp);
+        return '';
+    }
+};
 
 
 export default function DocumentTree({reloadKey, onSelectDocument, activeDocumentId}) {
@@ -124,8 +181,14 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
                                                     key={`doc-${doc.id}`}
                                                     className={`document-item ${doc.isActive ? 'active' : ''}`}
                                                     onClick={(e) => handleDocumentClick(doc.id, e)}
+                                                    title={doc.title}
                                                 >
-                                                    {doc.title}
+                                                    <span className="document-item-content">{doc.title}</span>
+                                                    {doc.updatedAt && (
+                                                        <span className="document-item-date">
+                                                            {formatDate(doc.updatedAt)}
+                                                        </span>
+                                                    )}
                                                 </li>
                                             ))}
                                         </ul>
@@ -137,29 +200,34 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
                 </div>
             )}
             {/* Tasks without epics */}
-            {processedFileTree.tasksWithoutEpic.length > 0 && (
-                <div className="tasks-section">
-                    <h3>Tasks</h3>
-                    <ul className="task-list">
-                        {processedFileTree.tasksWithoutEpic.map(task => (
-                            <li key={`task-${task.id}`} className="task-item">
-                                <div className="task-title">{task.title}</div>
-                                <ul className="document-list">
-                                    {task.documents && task.documents.map(doc => (
-                                        <li
-                                            key={`doc-${doc.id}`}
-                                            className={`document-item ${doc.isActive ? 'active' : ''}`}
-                                            onClick={(e) => handleDocumentClick(doc.id, e)}
-                                        >
-                                            {doc.title}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+
+            <div className="tasks-section">
+                <h3>Tasks</h3>
+                {processedFileTree.tasksWithoutEpic.length > 0 && (
+                    processedFileTree.tasksWithoutEpic.map(task => (
+                        <div key={`task-${task.id}`} className="task-item">
+                            <h4 className="task-title">{task.title}</h4>
+                            <ul className="document-list">
+                                {task.documents && task.documents.map(doc => (
+                                    <li
+                                        key={`doc-${doc.id}`}
+                                        className={`document-item ${doc.isActive ? 'active' : ''}`}
+                                        onClick={(e) => handleDocumentClick(doc.id, e)}
+                                        title={doc.title}
+                                    >
+                                        <span className="document-item-content">{doc.title}</span>
+                                        {doc.updatedAt && (
+                                            <span className="document-item-date">
+                                                {formatDate(doc.updatedAt)}
+                                            </span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))
+                )}
+            </div>
             {/* Standalone documents */}
             {processedFileTree.standaloneDocuments.length > 0 && (
                 <div className="documents-section">
@@ -170,8 +238,14 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
                                 key={`doc-${doc.id}`}
                                 className={`document-item ${doc.isActive ? 'active' : ''}`}
                                 onClick={(e) => handleDocumentClick(doc.id, e)}
+                                title={doc.title}
                             >
-                                {doc.title}
+                                <span className="document-item-content">{doc.title}</span>
+                                {doc.updatedAt && (
+                                    <span className="document-item-date">
+                                        {formatDate(doc.updatedAt)}
+                                    </span>
+                                )}
                             </li>
                         ))}
                     </ul>

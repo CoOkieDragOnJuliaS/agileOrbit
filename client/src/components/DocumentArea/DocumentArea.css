@@ -4,6 +4,7 @@
     flex-direction: column;
     height: 100vh; /* 100% of viewport height */
     background-color: #f9fafb;
+    overflow: hidden;
 }
 
 /* Header styles */
@@ -36,7 +37,8 @@
 /* Sidebar styles */
 .document-sidebar {
     padding: 10px; /* 0.625rem */
-    width: 280px; /* 17.5rem */
+    width: 350px; /* Increased from 250px to 350px */
+    min-width: 350px; /* Ensure minimum width is respected */
     border-right: 1px solid #e2e8f0;
     overflow-y: auto;
 }
@@ -47,7 +49,6 @@
     overflow-y: auto;
     height: 100%;
     list-style: none;
-    padding-left: 0;
 }
 /* Section Headers */
 .document-tree h3 {
@@ -61,9 +62,9 @@
 }
 /* Epic Items */
 .epic-item {
-    margin: 8px 0;
+    margin: 2px 0;
     position: relative;
-    padding-left: 20px;
+    padding-left: 12px;
 }
 .epic-item::before {
     content: "•";
@@ -86,12 +87,12 @@
     cursor: default;
 }
 /* Task Items */
-.task-item {
+li.task-item{
     margin: 4px 0 4px 24px;
     position: relative;
     padding-left: 24px;
 }
-.task-item::before {
+li.task-item::before {
     content: "↳";
     position: absolute;
     left: 0;
@@ -130,10 +131,12 @@
 .document-item {
     padding: 4px 8px 4px 24px;
     margin: 2px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 0.875rem;
     color: #4a5568;
     cursor: pointer;
-    border-radius: 4px;
     transition: all 0.2s ease;
     position: relative;
     list-style-type: none;
@@ -146,6 +149,20 @@
     font-size: 0.9em;
     transition: transform 0.2s;
 }
+
+.document-item-content {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+}
+.document-item-date {
+    font-size: 0.8em;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
 .document-item:hover {
     background-color: #f1f5f9;
     color: #4f46e5;
