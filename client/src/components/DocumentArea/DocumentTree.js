@@ -207,7 +207,7 @@ export default function DocumentTree({reloadKey, onSelectDocument, activeDocumen
             {/* Tasks without epics */}
 
             <div className="tasks-section">
-                <h3>Tasks</h3>
+                <h3>Tasks without Epic</h3>
                 {processedFileTree.tasksWithoutEpic.length > 0 && (
                     processedFileTree.tasksWithoutEpic
                         .filter(task => task.documents && task.documents.length > 0)
