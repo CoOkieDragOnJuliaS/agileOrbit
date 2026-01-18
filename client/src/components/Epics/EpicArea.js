@@ -4,12 +4,10 @@
  * @description Main DocumentArea component for regular users, providing access to the Documentview.
  */
 
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import EpicEditor from './EpicEditor';
 import EpicTree from './EpicTree';
-import './EpicArea.css';
+import '../DocumentArea/DocumentArea.css';
 import Header from "../../layout/Header";
 
 /**
@@ -28,32 +26,6 @@ import Header from "../../layout/Header";
  * } />
  */
 export default function EpicArea() {
-  /** @type {{currentUser: Object, signOut: Function}} Authentication context */
-  const { currentUser, signOut } = useAuth();
-  
-  /** @type {Function} Hook to programmatically navigate */
-  const navigate = useNavigate();
-
-  /**
-   * Handles the sign out process for the client user.
-   * Signs out the user and redirects to the home page.
-   * @async
-   * @function handleSignOut
-   * @returns {Promise<void>}
-   * @throws {Error} If sign out fails
-   */
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/');
-    } catch (error) {
-      console.error('Failed to sign out:', error);
-      throw error;
-    }
-  };
-  
- 
-  
 
   const [reloadKey, setReloadKey] = useState(0);
   const [activeEpicId, setActiveEpicId] = useState(null);
@@ -73,6 +45,7 @@ export default function EpicArea() {
                 setShowEditor(prev => !prev)
                 setActiveEpicId(null)
             }}
+            className="btn btn-secondary"
         >
             {showEditor ? "Editor schließen" : "Neues Dokument"}
         </button>
