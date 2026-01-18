@@ -49,7 +49,7 @@
     background-color: var(--primary-purple);
     border: none;
     border-radius: var(--radius);
-    color: white;
+    color: var(--bg-white);
     font-weight: 500;
     cursor: pointer;
     font-size: 14px;
@@ -60,23 +60,13 @@
     background-color: var(--primary-hover);
     transform: translateY(-1px);
 }
-/* Action button in header */
-.header-actions button {
-    padding: 8px 16px;
-    background-color: var(--primary-purple);
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    font-weight: 500;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
+
+.sign-out-btn:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--shadow-card)  /* focus ring */
 }
-/* Hover effect for action button */
-.header-actions button:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-1px);
-}
+
 /* Responsive adjustments for mobile */
 @media (max-width: 768px) {
     .dashboard-header {

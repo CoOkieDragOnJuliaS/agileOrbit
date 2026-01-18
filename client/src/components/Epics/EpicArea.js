@@ -7,7 +7,7 @@
 import React, { useState } from 'react';
 import EpicEditor from './EpicEditor';
 import EpicTree from './EpicTree';
-import './EpicArea.css';
+import '../DocumentArea/DocumentArea.css';
 import Header from "../../layout/Header";
 
 /**
@@ -45,8 +45,9 @@ export default function EpicArea() {
                 setShowEditor(prev => !prev)
                 setActiveEpicId(null)
             }}
+            className="btn btn-secondary"
         >
-            {showEditor ? "Editor schließen" : "Neues Dokument"}
+            {showEditor ? "Close Editor" : "New Document"}
         </button>
     </Header>
     <div className="document-content">

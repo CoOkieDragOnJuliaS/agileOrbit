@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import './TaskModal.css';
 
+
 /**
  * TaskModal Component
  * A modal dialog for viewing and editing task details and subtasks.
@@ -17,7 +18,45 @@ import './TaskModal.css';
 
 // API base URL for subtasks endpoint
 const API_BASE_URL = '/api/subtasks';
-const MAX_TAGS = 5;
+const MAX_TAGS = 13;
+const TYPE_TAG_PREFIX = 'type:';
+const ISSUE_TYPES = ['Bug', 'Task', 'Story'];
+
+const isTypeTag = (tag) => typeof tag === 'string' && tag.startsWith(TYPE_TAG_PREFIX);
+
+// Reads the issue type from the tags array.
+// We store the type as a reserved tag like: "type:Bug" | "type:Task" | "type:Story".
+//
+// Examples:
+// - getIssueTypeFromTags(['frontend', 'type:Bug']) => 'Bug'
+// - getIssueTypeFromTags(['frontend']) => ''
+//
+// If a type tag is present but not in ISSUE_TYPES, we treat it as invalid and return ''.
+const getIssueTypeFromTags = (tags) => {
+    if (!Array.isArray(tags)) return '';
+    const typeTag = tags.find(isTypeTag);
+    const raw = typeTag ? typeTag.slice(TYPE_TAG_PREFIX.length) : '';
+    return ISSUE_TYPES.includes(raw) ? raw : '';
+};
+
+// Returns a new tags array where the issue type is updated.
+// Invariant: there should be at most ONE type tag.
+//
+// Behavior:
+// - Removes all existing "type:*" tags
+// - If issueType is provided (e.g. 'Bug'), appends "type:Bug"
+// - If issueType is empty (""), it removes the type entirely
+//
+// Examples:
+// - setIssueTypeInTags(['a', 'type:Task'], 'Bug') => ['a', 'type:Bug']
+// - setIssueTypeInTags(['a', 'type:Bug'], '') => ['a']
+const setIssueTypeInTags = (tags, issueType) => {
+    const safeTags = Array.isArray(tags) ? tags : [];
+    const withoutType = safeTags.filter((t) => !isTypeTag(t));
+    if (!issueType) return withoutType;
+    return [...withoutType, `${TYPE_TAG_PREFIX}${issueType}`];
+};
+
 
 /**
  * Main TaskModal component
@@ -28,6 +67,7 @@ const MAX_TAGS = 5;
  * @param {Function} props.onDelete - Callback when task is deleted
  */
 const TaskModal = ({task, onClose, onSave, onDelete}) => {
+
     /**
      * State Management:
      * - formData: Tracks the current state of the form fields
@@ -45,7 +85,9 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         description: task?.description || '',
         status: task?.status || 'todo',
         tags: task?.tags || [],
-        epicId: task?.epicId || []
+        epicId: task?.epicId || [],
+        assignee: task?.assignee || [],
+        creator: task?.creator || ''
     });
 
     const [tagInput, setTagInput] = useState('');
@@ -56,6 +98,9 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
     const [editingDescription, setEditingDescription] = useState('');
     const [documents, setDocuments] = useState([]);
     const [epics, setEpics] = useState([]);
+    const [assignee, setassignee] = useState([]);
+    
+
 
     // --- EFFECTS ---
 
@@ -81,8 +126,10 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
             description: task?.description || '',
             status: task?.status || 'todo',
             epicId: task?.epicId || '',
-            tags: task?.tags || []
-        });
+            tags: task?.tags || [],
+            assignee: task?.assignee || [],
+            creator: task?.creator || ''
+        }, [task]);
 
         const fetchSubtasks = async () => {
             if (!task?.id) return;
@@ -183,10 +230,47 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                 //Setting empty array to prevent frontend issues
                 setEpics([]);
             }
+
+        
         };
+
+        const fetchassignee = async () => {
+            if (!task?.id) return;
+
+            try {
+                const response = await fetch(`/api/auth/assignee/`, {
+                    method: 'GET',
+                    credentials: 'include', // Include cookies for authentication
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                //handle if there are no subtasks yet, set empty array
+                if (response.status === 404) {
+                    //No subtasks found
+                    setassignee([]);
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to fetch documents');
+                }
+
+                const DocumentData = await response.json();
+                setassignee(DocumentData);
+            } catch (error) {
+                console.error('Error fetching subtasks:', error);
+                //Setting empty array to prevent frontend issues
+                setassignee([]);
+            }
+        }
 
         fetchEpics();
         fetchDocuments();
+        fetchassignee();
+
     }, [task]);
 
 
@@ -216,8 +300,10 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         if (e) e.preventDefault();
         const newTag = tagInput.trim();
         if (!newTag) return;
+        if (isTypeTag(newTag)) return;
         if (formData.tags.includes(newTag)) return;
-        if (formData.tags.length >= MAX_TAGS) return;
+        const visibleTagsCount = (formData.tags || []).filter((t) => !isTypeTag(t)).length;
+        if (visibleTagsCount >= MAX_TAGS) return;
 
         setFormData(prev => ({
             ...prev,
@@ -237,6 +323,14 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         setFormData(prev => ({
             ...prev,
             tags: prev.tags.filter(tag => tag !== tagToRemove)
+        }));
+    };
+
+    const handleIssueTypeChange = (e) => {
+        const value = e.target.value;
+        setFormData((prev) => ({
+            ...prev,
+            tags: setIssueTypeInTags(prev.tags, value)
         }));
     };
 
@@ -375,7 +469,9 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
 
     if (!task) return null;
 
-    const isTagLimitReached = formData.tags.length >= MAX_TAGS;
+    const issueType = getIssueTypeFromTags(formData.tags);
+    const visibleTags = (formData.tags || []).filter((t) => !isTypeTag(t));
+    const isTagLimitReached = visibleTags.length >= MAX_TAGS;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -572,9 +668,23 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                             </div>
 
                             <div className="sidebar-group">
+                                <label className="jira-label-uppercase">Type</label>
+                                <select
+                                    value={issueType}
+                                    onChange={handleIssueTypeChange}
+                                    className="jira-select"
+                                >
+                                    <option value="">None</option>
+                                    <option value="Bug">Bug</option>
+                                    <option value="Task">Task</option>
+                                    <option value="Story">Story</option>
+                                </select>
+                            </div>
+
+                            <div className="sidebar-group">
                                 <label className="jira-label-uppercase">Tags</label>
                                 <div className="tags-container">
-                                    {formData.tags.map((tag, index) => (
+                                    {visibleTags.map((tag, index) => (
                                         <span key={index} className="tag-pill">
                                             {tag}
                                             <button type="button" onClick={() => handleRemoveTag(tag)}
@@ -617,13 +727,30 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
 
                             <div className="sidebar-group read-only-meta">
                                 <div className="meta-item">
-                                    <span className="meta-label">Reporter</span>
-                                    <span className="meta-value">Me</span>
+                                    <span className="jira-label-uppercase">creator</span>
+                                    <span className="tag-pill">{formData.creator}</span>
                                 </div>
-                                <div className="meta-item">
-                                    <span className="meta-label">Created</span>
-                                    <span className="meta-value">Just now</span>
+                                <div className="sidebar-group">
+                                <div className="form-group">
+                                    <label className="jira-label-uppercase">assignee</label>
+
+                                    <select
+                                        className="jira-select"
+                                        name="assignee"
+                                        id="assignee"
+                                        value={formData.assignee}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Bitte Zuständigen auswählen</option>
+
+                                        {assignee.map((assignee) => (
+                                            <option key={assignee.uid} value={assignee.uid}>
+                                                {assignee.email}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
+                            </div>
                             </div>
                         </div>
                     </div>

@@ -80,7 +80,7 @@ router.get("/board", async (req, res) => {
  */
 router.post("/", async (req, res) => {
   try {
-    const { title, content = '', status = '', boardID, epicId = '', tags = [] } = req.body;
+    const { title, content = '', status = '', boardID, epicId = '', tags = [], creator } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: "Title is required" });
@@ -97,6 +97,7 @@ router.post("/", async (req, res) => {
       boardID,
       epicId,
       tags, // Add tags to the task data
+      creator,
       createdAt: now,
       updatedAt: now
     };
@@ -127,7 +128,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status, tags, epicId } = req.body;
+    const { title, description, status, tags, epicId, assignee, creator } = req.body;
     
     const taskRef = getTasksCollection().doc(id);
     const taskDoc = await taskRef.get();
@@ -142,6 +143,7 @@ router.put("/:id", async (req, res) => {
       ...(status !== undefined && { status }),
       ...(epicId !== undefined && { epicId }),
       ...(tags !== undefined && { tags }), // Update tags if provided
+      ...(assignee !== undefined && { assignee }),
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     };
 

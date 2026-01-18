@@ -9,6 +9,8 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import DocumentEditor from './DocumentEditor';
 import DocumentTree from './DocumentTree';
 import './DocumentArea.css';
+import '../../App.css';
+import '../../index.css';
 import Header from "../../layout/Header";
 import { useParams } from 'react-router-dom';
 
@@ -69,8 +71,9 @@ useEffect(() => {
                         setShowEditor(prev => !prev)
                         setActiveDocumentId(null)
                     }}
+                    className="btn btn-secondary"
                 >
-                    {showEditor ? "Editor schließen" : "Neues Dokument"}
+                    {showEditor ? "Close Editor" : "New Document"}
                 </button>
             </Header>
             <div className="document-content">

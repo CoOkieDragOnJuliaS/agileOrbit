@@ -1,4 +1,6 @@
-/* Main container for the document area */
+/* ============================
+   Main Container for Document Area
+   ============================ */
 .document-container {
     display: flex;
     flex-direction: column;
@@ -7,7 +9,9 @@
     overflow: hidden;
 }
 
-/* Header styles */
+/* ============================
+   Header Styles
+   ============================ */
 .document-header {
     display: flex;
     justify-content: space-between;
@@ -28,14 +32,18 @@
     color: var(--text-dark);
 }
 
-/* Container for header action buttons */
+/* ============================
+   Header Actions Buttons Container
+   ============================ */
 .header-actions {
     display: flex;
     gap: 16px; /* 1rem */
     align-items: center;
 }
 
-/* Sidebar styles */
+/* ============================
+   Sidebar Styles
+   ============================ */
 .document-sidebar {
     padding: 10px;
     width: 350px;
@@ -46,7 +54,9 @@
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Document tree */
+/* ============================
+   Document Tree Styles
+   ============================ */
 .document-tree {
     padding: 8px 0;
     overflow-y: auto;
@@ -58,14 +68,15 @@
     padding: 8px;
 }
 
-/* Section Headers */
+/* Section Headers in Document Tree */
 .document-tree h3 {
-    font-size: 1rem;
+    font-size: 16px; /* 1rem = 16px */
     font-weight: 600;
-    color: var(--primary-purple);
-    padding: 8px 16px 8px 24px;
+    color: var(--bg-white);
+    background-color: var(--primary-purple);
+    padding: 8px 16px 8px 24px; /* padding: 8px 16px 8px 24px */
     margin: 8px 0 4px;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px dashed var(--border-light);
     position: relative;
 }
 
@@ -73,24 +84,25 @@
 .epic-item {
     margin: 2px 0;
     position: relative;
-    padding-left: 12px;
+    padding-left: 0;
 }
 
-.epic-item::before {
-    content: "•";
+.epic-item > h4::before {
+    content: "-";
     position: absolute;
     left: 0;
     color: var(--primary-purple);
-    font-size: 1.5em;
-    line-height: 1;
-    top: 4px;
+    font-size: 24px; /* 1.5em */
+    line-height: 1.2;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .epic-item > h4 {
-    font-size: 0.95rem;
+    font-size: 15.2px; /* 0.95rem = 15.2px */
     font-weight: 600;
     color: var(--text-dark);
-    padding: 6px 12px 6px 24px;
+    padding: 4px 12px;
     margin: 4px 0;
     background-color: var(--bg-app);
     border: 1px solid var(--border-light);
@@ -100,11 +112,13 @@
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Task Items */
-li.task-item{
-    margin: 4px 0 4px 24px;
+/* ============================
+   Task Items
+   ============================ */
+li.task-item {
+    margin: 4px 0 4px 16px; /* 4px top/bottom, 16px left */
     position: relative;
-    padding-left: 24px;
+    padding-left: 20px; /* 20px */
 }
 
 li.task-item::before {
@@ -112,11 +126,19 @@ li.task-item::before {
     position: absolute;
     left: 0;
     color: var(--text-muted);
-    font-size: 1.2em;
+    font-size: 19.2px; /* 1.2em = 19.2px */
 }
 
+/* Document items under task-item divs */
+div.task-item .document-item-documentTree {
+    margin: 4px 0 4px 16px; /* 4px, 16px */
+    position: relative;
+    padding-left: 28px; /* 28px */
+}
+
+/* Task title styles */
 .task-title {
-    font-size: 0.9rem;
+    font-size: 14.4px; /* 0.9rem = 14.4px */
     font-weight: 500;
     color: var(--text-dark);
     padding: 4px 8px;
@@ -129,15 +151,55 @@ li.task-item::before {
     border: 1px solid var(--border-light);
 }
 
-/* Document List */
-.document-list {
-    margin: 4px 0 4px 48px;
+.document-tree .task-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.document-tree .task-title-content {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.document-tree .task-title-button {
+    margin-left: auto;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Document item content styles */
+.task-title-content {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px; /* 10px */
+}
+
+/* Document item date styles */
+.task-title-button{
+    font-size: 13px; /* 0.8em = 13px */
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+/* ============================
+   Document List Styles
+   ============================ */
+.document-list-documentTree {
+    margin: 4px 0 4px 28px; /* 4px, 28px */
     padding: 0;
     list-style: none;
     position: relative;
 }
 
-.document-list::before {
+.document-list-documentTree::before {
     content: "";
     position: absolute;
     left: -24px;
@@ -146,13 +208,14 @@ li.task-item::before {
     width: 20px;
 }
 
-.document-item {
-    padding: 6px 8px 6px 24px;
+/* Individual Document Item Styles */
+.document-item-documentTree {
+    padding: 4px 8px 4px 28px; /* 4px 8px 4px 28px */
     margin: 2px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.875rem;
+    font-size: 14px; /* 0.875rem = 14px */
     color: var(--text-main);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -163,15 +226,16 @@ li.task-item::before {
     border: 1px solid transparent;
 }
 
-.document-item::before {
+.document-item-documentTree::before {
     content: "📄";
     position: absolute;
-    left: 6px;
+    left: 6px; /* 6px */
     color: var(--text-muted);
-    font-size: 0.9em;
+    font-size: 14.4px; /* 0.9em = 14.4px */
     transition: transform 0.2s;
 }
 
+/* Document item content styles */
 .document-item-content {
     flex: 1;
     white-space: nowrap;
@@ -180,24 +244,27 @@ li.task-item::before {
     margin-right: 10px;
 }
 
+/* Document item date styles */
 .document-item-date {
-    font-size: 0.8em;
+    font-size: 13px; /* 0.8em = 13px */
     color: var(--text-muted);
     white-space: nowrap;
 }
 
-.document-item:hover {
+/* Hover effects for document items */
+.document-item-documentTree:hover {
     background-color: var(--primary-light);
     color: var(--primary-purple);
     border-color: var(--primary-purple);
     transform: translateX(2px);
 }
 
-.document-item:hover::before {
+.document-item-documentTree:hover::before {
     transform: translateX(2px);
 }
 
-.document-item.active {
+/* Active state for document items */
+.document-item-documentTree.active {
     background-color: var(--primary-light);
     color: var(--primary-purple);
     font-weight: 500;
@@ -205,33 +272,57 @@ li.task-item::before {
     padding-left: 21px; /* 24px - 3px border */
 }
 
-/* Active state for tasks */
+/* ============================
+   Active State for Tasks
+   ============================ */
 .task-item.active .task-title {
     background-color: var(--primary-light);
     color: var(--primary-purple);
     font-weight: 500;
 }
 
-/* Nested Lists */
+/* ============================
+   Task List Margins
+   ============================ */
 .task-list {
-    margin: 0;
-    padding: 0;
+    margin-left: 8px; /* 8px */
     list-style: none;
 }
 
-/* Main content area */
+/* Ensure nested document lists are aligned properly */
+.task-list .document-list-documentTree {
+    margin-left: 8px; /* 8px */
+}
+
+/* Adjustments for documents section within sections */
+.documents-section > .document-list-documentTree > .document-item-documentTree {
+    left: 0;
+    padding: 4px 8px 4px 28px; /* 4px 8px 4px 28px */
+    margin: 4px 0 4px 16px; /* 4px 0 4px 16px */
+}
+
+/* Section headers in specific sections */
+.documents-section > h3, .tasks-section > h3 {
+    margin-top: 40px; /* 40px */
+}
+
+/* ============================
+   Main Content Area
+   ============================ */
 .document-content {
     flex: 1;
     display: flex;
     overflow: hidden;
-    padding: 16px; /* 1rem */
-    gap: 16px; /* 1rem */
+    padding: 16px; /* 16px */
+    gap: 16px; /* 16px */
 }
 
-/* Editor container */
+/* ============================
+   Editor Container
+   ============================ */
 .document-editor-container {
     flex: 1;
-    padding: 24px; /* 1.5rem */
+    padding: 24px; /* 24px */
     overflow-y: auto;
     background-color: var(--bg-app);
 }
@@ -243,10 +334,12 @@ li.task-item::before {
     justify-content: center;
     height: 100%;
     color: var(--text-muted);
-    font-size: 18px; /* 1.125rem */
+    font-size: 18px; /* 18px */
 }
 
-/* Editor styles */
+/* ============================
+   Editor Styles
+   ============================ */
 .editor-container {
     background: var(--bg-white);
     border-radius: 8px; /* 0.5rem */
@@ -256,15 +349,16 @@ li.task-item::before {
     flex-direction: column;
 }
 
-/* Editor header section */
+/* Editor header styles */
 .editor-header {
     padding: 16px 24px;
     border-bottom: 1px solid var(--border-light);
     background-color: var(--bg-white);
     transition: background-color 0.3s ease, border-color 0.3s ease;
+
 }
 
-/* Title input field */
+/* Title input field styles */
 .title-input {
     width: 100%;
     font-size: 24px; /* 1.5rem */
@@ -279,14 +373,14 @@ li.task-item::before {
     color: var(--text-muted);
 }
 
-/* Editor content area */
+/* Editor content styles */
 .editor-content {
     flex: 1;
     overflow-y: auto;
     padding: 24px; /* 1.5rem */
 }
 
-/* Action buttons container */
+/* Editor action buttons container */
 .editor-actions {
     padding: 16px 24px; /* 1rem 1.5rem */
     border-top: 1px solid var(--border-light);
@@ -295,7 +389,9 @@ li.task-item::before {
     gap: 12px; /* 0.75rem */
 }
 
-/* Responsive design for mobile */
+/* ============================
+   Responsive Design for Mobile
+   ============================ */
 @media (max-width: 768px) {
     .document-container {
         flex-direction: column;
@@ -322,12 +418,7 @@ li.task-item::before {
     }
 
     .header-actions {
-        gap: 8px; /* 0.5rem */
-    }
-
-    .close-editor-btn {
-        padding: 6px 12px; /* 0.375rem 0.75rem */
-        font-size: 13px; /* 0.8125rem */
+        gap: 8px; /* 8px */
     }
 
     .document-tree {
@@ -335,14 +426,14 @@ li.task-item::before {
     }
 
     .document-tree h3 {
-        padding: 6px 8px;
-        font-size: 0.95rem;
+        padding: 6px 8px; /* 6px 8px */
+        font-size: 15.2px; /* 0.95rem = 15.2px */
     }
 
     .task-title,
     .document-item {
         padding-left: 20px;
-        font-size: 0.85rem;
+        font-size: 13.6px; /* 0.85rem = 13.6px */
     }
 
     .document-list {

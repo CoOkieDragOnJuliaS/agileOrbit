@@ -103,13 +103,13 @@ const handleDelete = async (epicId) => {
         onChange={setContent}
         placeholder="Start writing your epic..."
       />
-      <button onClick={() => handleSave(content,epicId, title)} type="button">Save</button>
+      <button onClick={() => handleSave(content,epicId, title)} type="button" className="btn btn-primary">Save</button>
       
      {epicId && (
   <button
     onClick={() => handleDelete(epicId)}
     type="button"
-    className="ml-2 px-4 py-2 bg-red-600 rounded"
+    className="btn btn-danger"
   >
     Delete
   </button>

@@ -99,12 +99,30 @@
     overflow: hidden; /* Hide any content that overflows */
 }
 
+.kanban-card--bug {
+    border-left: 6px solid #de350b;
+}
+
+.kanban-card--task {
+    border-left: 6px solid #0052cc;
+}
+
+.kanban-card--story {
+    border-left: 6px solid #2f855a;
+}
+
 .kanban-card:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Enhanced shadow on hover */
     border: solid rgb(0, 0, 0, 0.5); /* Show border on hover with some opacity */
     transform: translateY(-2px); /* Slight lift effect */
     cursor: pointer; /* Pointer cursor on hover */
+}
+
+.kanban-card--bug:hover,
+.kanban-card--task:hover,
+.kanban-card--story:hover {
+    border-left-width: 6px;
 }
 
 .kanban-card h4 {

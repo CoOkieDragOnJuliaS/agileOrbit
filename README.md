@@ -1,6 +1,46 @@
 # AgileOrbit
 
-FH Project for SoftwareEngineering - AgileOrbit is a tool to help developers keep track of tasks and documents. It can evolve in the future to hold more responsibilities and features to help coordinate and cooperate with the team itself.
+FH Project for SoftwareEngineering - AgileOrbit is a comprehensive project management tool designed to help development teams track tasks, documents, and collaborate effectively.
+
+## 🚀 Project Overview
+
+AgileOrbit is a modern, full-stack web application that combines task management with document collaboration in a single platform. Built with a React.js frontend and Node.js backend, it provides a seamless experience for development teams to manage their projects efficiently.
+
+### Key Features
+
+- **Task Management**: Create, assign, and track tasks with a Kanban-style board
+- **Document Organization**: Store and organize project documents with a hierarchical structure
+- **Epic & Subtask System**: Break down work into epics and subtasks for better organization
+- **Real-time Collaboration**: Team members can collaborate on tasks and documents in real-time
+- **Responsive Design**: Works seamlessly across desktop and mobile devices
+
+### Tech Stack
+
+- **Frontend**: React.js, Redux, TailwindCSS
+- **Backend**: Node.js, Express
+- **Database**: Firebase (Firestore, Authentication)
+
+## 🎯 Use Cases
+
+### 1. Sprint Planning
+- Create and assign tasks for upcoming sprints
+- Organize tasks by assigning epics for better project structure
+
+### 2. Task Tracking
+- Move tasks across different status columns (To Do, In Progress, Review, Done)
+- Add detailed descriptions, checklists and issueType to tasks
+
+### 3. Document Management
+- Store and organize project documentation in a hierarchical structure
+- Link documents to specific tasks or epics
+
+### 4. Team Collaboration
+- Assign tasks to team members
+- Work together on Tasks and Documents
+
+### 5. Progress Tracking
+- Visualize project progress with the Kanban board
+- Keep up-to-date with the Documents that are located in the Documents section
 
 ## 🚀 Getting Started
 
@@ -79,6 +119,7 @@ In root folder:
 - **Environment Variables Not Loading**: Restart your development server after changing `.env` files
 - **Network Request Failed**: Check for typos in Firebase config and ensure all services are enabled
 - **Unversioning a file you don't want to commit**: git rm --cached <filename>
+- **Failed login**: may need a refresh of the page before you can login again - the browser can open faster than the connection is stable
 
 ## 📝 Notes
 - Never commit `.env` files to version control
