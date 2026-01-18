@@ -150,6 +150,25 @@ router.get('/me', async (req, res) => {
     }
 });
 
+router.get('/assignee', async (req, res) => {
+    try {
+  
+      const listUsersResult = await admin.auth().listUsers(1000);
+  
+      const users = listUsersResult.users.map(user => ({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email,
+        photoURL: user.photoURL
+      }));
+  
+      res.json(users);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      res.status(500).json({ error: 'Failed to fetch users' });
+    }
+  });
+
 
 /**
  * @route POST /auth/admin/signin
