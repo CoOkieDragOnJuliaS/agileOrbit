@@ -16,6 +16,14 @@ import { useAuth } from '../../contexts/AuthContext';
 // Base URL for the task API endpoints - using relative URL to work with proxy
 const API_BASE_URL = '/api/task';
 
+const TYPE_TAG_PREFIX = 'type:';
+
+const getIssueTypeFromTags = (tags) => {
+    if (!Array.isArray(tags)) return '';
+    const typeTag = tags.find((t) => typeof t === 'string' && t.startsWith(TYPE_TAG_PREFIX));
+    return typeTag ? typeTag.slice(TYPE_TAG_PREFIX.length) : '';
+};
+
 /**
  * KanbanBoard Component
  * A drag-and-drop task management board with four columns:
@@ -354,11 +362,14 @@ function KanbanBoard() {
         const taskSubtasks = subtasks[task.id] || [];
         const completedCount = taskSubtasks.filter(st => st.status === 'completed').length;
         const totalCount = taskSubtasks.length;
+
+        const issueType = getIssueTypeFromTags(task.tags);
+        const issueTypeClass = issueType ? `kanban-card--${issueType.toLowerCase()}` : '';
    
         return (
             <div 
                 key={task.id} 
-                className="kanban-card"
+                className={`kanban-card ${issueTypeClass}`}
                 onClick={() => handleTaskClick(task)}
                 draggable
                 onDragStart={() => {

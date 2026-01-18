@@ -18,7 +18,45 @@ import './TaskModal.css';
 
 // API base URL for subtasks endpoint
 const API_BASE_URL = '/api/subtasks';
-const MAX_TAGS = 5;
+const MAX_TAGS = 13;
+const TYPE_TAG_PREFIX = 'type:';
+const ISSUE_TYPES = ['Bug', 'Task', 'Story'];
+
+const isTypeTag = (tag) => typeof tag === 'string' && tag.startsWith(TYPE_TAG_PREFIX);
+
+// Reads the issue type from the tags array.
+// We store the type as a reserved tag like: "type:Bug" | "type:Task" | "type:Story".
+//
+// Examples:
+// - getIssueTypeFromTags(['frontend', 'type:Bug']) => 'Bug'
+// - getIssueTypeFromTags(['frontend']) => ''
+//
+// If a type tag is present but not in ISSUE_TYPES, we treat it as invalid and return ''.
+const getIssueTypeFromTags = (tags) => {
+    if (!Array.isArray(tags)) return '';
+    const typeTag = tags.find(isTypeTag);
+    const raw = typeTag ? typeTag.slice(TYPE_TAG_PREFIX.length) : '';
+    return ISSUE_TYPES.includes(raw) ? raw : '';
+};
+
+// Returns a new tags array where the issue type is updated.
+// Invariant: there should be at most ONE type tag.
+//
+// Behavior:
+// - Removes all existing "type:*" tags
+// - If issueType is provided (e.g. 'Bug'), appends "type:Bug"
+// - If issueType is empty (""), it removes the type entirely
+//
+// Examples:
+// - setIssueTypeInTags(['a', 'type:Task'], 'Bug') => ['a', 'type:Bug']
+// - setIssueTypeInTags(['a', 'type:Bug'], '') => ['a']
+const setIssueTypeInTags = (tags, issueType) => {
+    const safeTags = Array.isArray(tags) ? tags : [];
+    const withoutType = safeTags.filter((t) => !isTypeTag(t));
+    if (!issueType) return withoutType;
+    return [...withoutType, `${TYPE_TAG_PREFIX}${issueType}`];
+};
+
 
 /**
  * Main TaskModal component
@@ -29,6 +67,7 @@ const MAX_TAGS = 5;
  * @param {Function} props.onDelete - Callback when task is deleted
  */
 const TaskModal = ({task, onClose, onSave, onDelete}) => {
+
     /**
      * State Management:
      * - formData: Tracks the current state of the form fields
@@ -261,8 +300,10 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         if (e) e.preventDefault();
         const newTag = tagInput.trim();
         if (!newTag) return;
+        if (isTypeTag(newTag)) return;
         if (formData.tags.includes(newTag)) return;
-        if (formData.tags.length >= MAX_TAGS) return;
+        const visibleTagsCount = (formData.tags || []).filter((t) => !isTypeTag(t)).length;
+        if (visibleTagsCount >= MAX_TAGS) return;
 
         setFormData(prev => ({
             ...prev,
@@ -282,6 +323,14 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         setFormData(prev => ({
             ...prev,
             tags: prev.tags.filter(tag => tag !== tagToRemove)
+        }));
+    };
+
+    const handleIssueTypeChange = (e) => {
+        const value = e.target.value;
+        setFormData((prev) => ({
+            ...prev,
+            tags: setIssueTypeInTags(prev.tags, value)
         }));
     };
 
@@ -420,7 +469,9 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
 
     if (!task) return null;
 
-    const isTagLimitReached = formData.tags.length >= MAX_TAGS;
+    const issueType = getIssueTypeFromTags(formData.tags);
+    const visibleTags = (formData.tags || []).filter((t) => !isTypeTag(t));
+    const isTagLimitReached = visibleTags.length >= MAX_TAGS;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -617,9 +668,23 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                             </div>
 
                             <div className="sidebar-group">
+                                <label className="jira-label-uppercase">Type</label>
+                                <select
+                                    value={issueType}
+                                    onChange={handleIssueTypeChange}
+                                    className="jira-select"
+                                >
+                                    <option value="">None</option>
+                                    <option value="Bug">Bug</option>
+                                    <option value="Task">Task</option>
+                                    <option value="Story">Story</option>
+                                </select>
+                            </div>
+
+                            <div className="sidebar-group">
                                 <label className="jira-label-uppercase">Tags</label>
                                 <div className="tags-container">
-                                    {formData.tags.map((tag, index) => (
+                                    {visibleTags.map((tag, index) => (
                                         <span key={index} className="tag-pill">
                                             {tag}
                                             <button type="button" onClick={() => handleRemoveTag(tag)}
