@@ -662,8 +662,8 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
 
                             <div className="sidebar-group read-only-meta">
                                 <div className="meta-item">
-                                    <span className="meta-label">creator</span>
-                                    <span className="meta-value">{formData.creator}</span>
+                                    <span className="jira-label-uppercase">creator</span>
+                                    <span className="tag-pill">{formData.creator}</span>
                                 </div>
                                 <div className="sidebar-group">
                                 <div className="form-group">
