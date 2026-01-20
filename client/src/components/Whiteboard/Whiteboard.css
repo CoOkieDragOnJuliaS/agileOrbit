@@ -64,8 +64,8 @@
    ============================ */
 .clear-btn {
     margin-left: auto;
-    background-color: var(--danger);
-    color: white;
+    background-color: var(--jira-red-bg);
+    color: var(--jira-red);
     border: none;
     padding: 8px 15px;
     border-radius: var(--radius);
@@ -75,9 +75,9 @@
 }
 
 .clear-btn:hover {
-    background-color: var(--danger-hover);
+    background-color: var(--jira-red-hover);
     transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
 }
 
 .clear-btn:active {

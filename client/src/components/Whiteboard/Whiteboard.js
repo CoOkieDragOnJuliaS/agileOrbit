@@ -134,7 +134,7 @@ const Whiteboard = () => {
                     <label>Boldness:</label>
                     <input type="range" min="1" max="20" value={lineWidth} onChange={(e) => setLineWidth(e.target.value)} />
                 </div>
-                <button onClick={clearCanvas} className="clear-btn">Delete/Clear</button>
+                <button onClick={clearCanvas} className="btn btn-danger clear-btn">Delete/Clear</button>
                 
                 {/* NEW SAVE BUTTON */}
                 <button onClick={handleSaveClick} style={{ marginLeft: '10px', padding: '5px 10px', cursor: 'pointer' }}>
