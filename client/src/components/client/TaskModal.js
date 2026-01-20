@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import './TaskModal.css';
+import { auth } from '../../config/firebase';
+
 
 /**
  * TaskModal Component
@@ -61,7 +63,8 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
             title: task?.title || '',
             description: task?.description || '',
             status: task?.status || 'todo',
-            epicId: task?.epicId || ''
+            epicId: task?.epicId || '',
+            assignedTo: task?.assignedTo || []
         });
 
        
@@ -167,8 +170,42 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
             }
         };
 
+        const fetchUsers = async () => {
+
+            try {
+                const currentUser = auth.currentUser;
+                if (!currentUser) {
+                    setUsers([]);
+                    return;
+                }
+
+                const token = await currentUser.getIdToken();
+
+                const response = await fetch('/api/auth/users', {
+                    method: 'GET',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || errorData.error || 'Failed to fetch users');
+                }
+
+                const usersData = await response.json();
+                setUsers(usersData);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                //Setting empty array to prevent frontend issues
+                setUsers([]);
+            }
+        };
+
         fetchEpics();
         fetchDocuments();
+        fetchUsers();
     }, [task]);
     
 
@@ -177,7 +214,8 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
         title: task?.title || '',
         description: task?.description || '',
         status: task?.status || 'todo', // Default status is 'todo'
-        epicId: task?.epicId || []
+        epicId: task?.epicId || [],
+        assignedTo: task?.assignedTo || []
     });
 
     // State for managing subtasks
@@ -187,6 +225,8 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
     const [editingDescription, setEditingDescription] = useState(''); // Current description being edited
     const [documents, setDocuments] = useState([]); // List of Documents to this task
     const [epics, setEpics] = useState([]);// List of Epics to this task
+    const [users, setUsers] = useState([]);// List of users for task assigment
+
 
     /**
      * Handles changes to form inputs
@@ -202,12 +242,28 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
     };
 
     /**
+     * Handles changes to the assigned user selection
+     * Updates the formData state with the selected user information
+     * @param {Object} e - The change event from the select field
+     */
+    const handleAssignedToChange = (e) => {
+        const uid = e.target.value;
+        const selectedUser = users.find(u => u.uid === uid);
+
+        setFormData(prev => ({
+            ...prev,
+            assignedTo: selectedUser ? [{ uid: selectedUser.uid, name: selectedUser.name }] : []
+        }));
+    };
+
+    /**
      * Handles form submission
      * Calls the onSave prop with the current form data
      * @param {Object} e - The form submission event
      */
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("Saving formData:", formData);
         onSave(formData);
     };
 
@@ -429,6 +485,25 @@ const TaskModal = ({task, onClose, onSave, onDelete}) => {
                         </select>
                     </div>
                     
+                    <div className="form-group">
+                        <label htmlFor="assignedTo">Assignee</label>
+
+                        <select
+                            name="assignedTo"
+                            id="assignedTo"
+                            value={formData.assignedTo?.[0]?.uid || ""}
+                            onChange={handleAssignedToChange}
+                        >
+                            <option value="">Bitte User auswählen</option>
+
+                            {users.map((user) => (
+                            <option key={user.uid} value={user.uid}>
+                                {user.name}
+                            </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div className="form-group">
   <label>Documents</label>
   <div className="documents-list">

@@ -150,7 +150,8 @@ function KanbanBoard() {
                 title: 'New Task',
                 description: 'Click to edit',
                 status,
-                boardID: 'default-board' // TODO: Replace with actual board ID from props or context
+                boardID: 'default-board', // TODO: Replace with actual board ID from props or context
+                assignedTo: []
             };
 
             console.log('Creating task with data:', newTask);

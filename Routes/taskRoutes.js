@@ -124,7 +124,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status, epicId } = req.body;
+    const { title, description, status, epicId, assignedTo } = req.body;
     
     const taskRef = getTasksCollection().doc(id);
     const taskDoc = await taskRef.get();
@@ -138,6 +138,7 @@ router.put("/:id", async (req, res) => {
       ...(description !== undefined && { description }),
       ...(status !== undefined && { status }),
       ...(epicId !== undefined && { epicId }),
+      ...(assignedTo !== undefined && { assignedTo }),
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     };
 

@@ -217,6 +217,52 @@ router.post('/admin/signin', loginLimiter, async (req, res) => {
 });
 
 /**
+ * @route GET /auth/users
+ * @description Get all users (for task assignment)
+ * @access Private (Any authenticated user)
+ * @param {Object} req - Express request object
+ * @param {string} [req.headers.authorization] - Bearer token
+ * @returns {Array<Object>} List of users
+ * @example
+ * // Response
+ * [
+ *   { "uid": "user123", "name": "John" },
+ *   { "uid": "user456", "name": "Max" }
+ * ]
+ */
+router.get('/users', async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+
+        // Verify token
+        await admin.auth().verifyIdToken(token);
+
+        // Fetch users from Firebase Auth
+        const listResult = await admin.auth().listUsers(50);
+
+        const users = listResult.users.map(user => {
+            const email = user.email || "";
+            const name = email.includes("@") ? email.split("@")[0] : "";
+
+            return {
+                uid: user.uid,
+                name
+            };
+        });
+
+        res.json(users);
+
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+
+/**
  * @description Export the router for use in the main application
  * @type {express.Router}
  */
