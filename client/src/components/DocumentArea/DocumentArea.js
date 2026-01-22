@@ -5,7 +5,6 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
 import DocumentEditor from './DocumentEditor';
 import DocumentTree from './DocumentTree';
 import './DocumentArea.css';
@@ -32,11 +31,8 @@ import { useParams } from 'react-router-dom';
  */
 export default function DocumentArea() {
     /** @type {Function} Hook to programmatically navigate */
-    const navigate = useNavigate();
 
-    const location = useLocation();
-    // Check if we have a taskId from the TaskModal
-    const taskId = location.state?.taskId;
+
 
     const [reloadKey, setReloadKey] = useState(0);
     const [activeDocumentId, setActiveDocumentId] = useState(null);
@@ -46,9 +42,9 @@ export default function DocumentArea() {
     };
 
     const [showEditor, setShowEditor] = useState(false);
-
-
     const { docId } = useParams();
+
+    
 
 useEffect(() => {
     if (docId) {
@@ -57,11 +53,7 @@ useEffect(() => {
     }
 }, [docId]);
 
-useEffect(() => {
-    if (taskId) {
-        setShowEditor(true);
-    }
-}, [taskId]);
+
 
     return (
         <div className="document-container">
@@ -97,18 +89,12 @@ useEffect(() => {
                                 triggerReload();
                                 // Update the active document ID to the newly saved document
                                 setActiveDocumentId(savedDocumentId);
-                                if (taskId) {
-                                    navigate(-1);
-                                }
+                               
                             }}
                             onDeleted={() => {
                                 triggerReload();
                                 setActiveDocumentId(null);
-                                if (!taskId) {
-                                    setShowEditor(false);
-                                } else {
-                                    navigate(-1);
-                                }
+                                setShowEditor(false);
                             }}/>) :
                         (<div className="document-placeholder">
                                 <p>Select a document or create a new one to get started</p>

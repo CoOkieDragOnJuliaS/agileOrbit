@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {useLocation} from "react-router-dom";
 import './DocumentArea.css';
 
 //import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -15,7 +14,6 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
     const [loading, setLoading] = useState('');
     const [title, setTitle] = useState('');
     const [taskId, setTaskId] = useState('');
-    const location = useLocation();
     
     //let taskId = location.state?.taskId;
     
@@ -31,11 +29,7 @@ export default function DocumentEditor({documentId, onSaved, onDeleted}) {
 
 
 
-    useEffect(() => {
-        if (location.state?.taskId) {
-          setTaskId(location.state.taskId);
-        }
-      }, [location.state?.taskId]);
+  
 
     const saveDocument = useCallback(async (content, docId, title) => {
         //console.log("content:", content);
