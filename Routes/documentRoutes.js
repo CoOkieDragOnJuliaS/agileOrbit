@@ -84,7 +84,7 @@ router.delete("/deleteDocument", async (req, res) => {
     } catch (err) {
         res.status(500).json({error: "Failed to delete document"})
     }
-    res.status(201).json({id: docRef.id});
+    res.status(201).json({id: id});
 });
 
 router.get("/fileTree", async (req, res) => {
